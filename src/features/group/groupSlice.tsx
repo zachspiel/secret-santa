@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Group } from '../../common/types';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Group } from "../../common/types";
 
 interface GroupSlice {
   groups: Group[];
@@ -7,15 +7,15 @@ interface GroupSlice {
 
 const initialState: GroupSlice = {
   groups: [
-    { _id: '1', name: 'Group1', members: [{ _id: '11', name: 'BOB', wishList: '' }] },
-    { _id: '2', name: 'Group2', members: [{ _id: '22', name: 'BOB', wishList: '' }] },
-    { _id: '3', name: 'Group3', members: [{ _id: '33', name: 'BOB', wishList: '' }] },
-    { _id: '4', name: 'Group4', members: [{ _id: '44', name: 'BOB', wishList: '' }] },
+    { _id: "1", name: "Group1", members: [{ _id: "11", name: "BOB", wishList: "" }] },
+    { _id: "2", name: "Group2", members: [{ _id: "22", name: "BOB", wishList: "" }] },
+    { _id: "3", name: "Group3", members: [{ _id: "33", name: "BOB", wishList: "" }] },
+    { _id: "4", name: "Group4", members: [{ _id: "44", name: "BOB", wishList: "" }] },
   ],
 };
 
 export const groupsSlice = createSlice({
-  name: 'groups',
+  name: "groups",
   initialState,
   reducers: {
     addGroup: (state, action: PayloadAction<Group>) => {

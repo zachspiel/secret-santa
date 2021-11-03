@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface MembersSlice {
   membersList: string[];
@@ -11,7 +11,7 @@ const initialState: MembersSlice = {
 };
 
 export const membersSlice = createSlice({
-  name: 'members',
+  name: "members",
   initialState,
   reducers: {
     addMember: (state, action: PayloadAction<string>) => {

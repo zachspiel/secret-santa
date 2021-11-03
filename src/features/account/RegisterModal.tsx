@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Password } from 'primereact/password';
-import { InputText } from 'primereact/inputtext';
-import { RegisterPayload } from '../../common/types';
-import { Dialog } from 'primereact/dialog';
+import React, { useState } from "react";
+import { Password } from "primereact/password";
+import { InputText } from "primereact/inputtext";
+import { RegisterPayload } from "../../common/types";
+import { Dialog } from "primereact/dialog";
 
 interface Props {
   isVisible: boolean;
@@ -15,21 +15,25 @@ const RegisterModal = (props: Props): JSX.Element => {
   const [isLastNameValid, setIsLastNameValid] = useState(true);
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isPasswordValid, setIsPasswordValid] = useState(true);
+  const [isPasswordEqual, setIsPasswordEqual] = useState(true);
+  const [passwordCopy, setPasswordCopy] = useState("");
 
   const [formData, setFormData] = useState<RegisterPayload>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
   });
 
-  const isDisabled =
-    !isFirstNameValid || !isLastNameValid || !isEmailValid || !isPasswordValid;
+  const isValid =
+    isFirstNameValid && isLastNameValid && isEmailValid && isPasswordValid && isPasswordEqual;
 
   const onSubmit = () => {
-    if (!isDisabled) {
+    verifyFormData();
+
+    if (isValid) {
       // void registerUser(formData);
-      console.log('IS VALID');
+      console.log("IS VALID");
     }
   };
   /*
@@ -51,18 +55,17 @@ const RegisterModal = (props: Props): JSX.Element => {
     setFormData(_formData);
   };
 
-  const verifyFirstNameInput = (value: string) => {
-    setIsFirstNameValid(value.length >= 3);
-  };
-
-  const verifyLastNameInput = (value: string) => {
-    setIsLastNameValid(value.length >= 3);
-  };
+  const verifyFormData = () => {
+    verifyEmail();
+    verifyPassword();
+    setIsFirstNameValid(formData.firstName.length >= 3);
+    setIsLastNameValid(formData.lastName.length >= 3);
+  }
 
   const createErrorMessage = (isValid: boolean, message: string) => {
     if (!isValid) {
       return (
-        <small id='email-help' className='p-error p-d-block'>
+        <small id="email-help" className="p-error p-d-block">
           {message}
         </small>
       );
@@ -70,8 +73,13 @@ const RegisterModal = (props: Props): JSX.Element => {
   };
 
   const verifyPassword = () => {
-    setIsPasswordValid(formData.password.length > 6);
+    setIsPasswordValid(formData.password.length >= 6);
+    setIsPasswordEqual(formData.password === passwordCopy);
   };
+
+  React.useEffect(() => {
+    console.log(isPasswordValid);
+  }, [isPasswordValid]);
 
   const verifyEmail = () => {
     const emailIsValid = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(formData.email);
@@ -79,34 +87,36 @@ const RegisterModal = (props: Props): JSX.Element => {
   };
 
   return (
-    <Dialog header='Register' onHide={() => props.onHide} visible={props.isVisible}>
-      <div className='p-grid p-fluid col'>
-        <div className='p-field'>
-          <label htmlFor='name'>Email Address</label>
-          <div className='p-inputgroup'>
+    <Dialog header="Register" onHide={() => props.onHide()} visible={props.isVisible}>
+      <div className="p-grid p-fluid col">
+        <div className="p-field">
+          <label htmlFor="name">First Name</label>
+          <div className="p-inputgroup">
             <InputText
-              id='firstName'
+              id="firstName"
               value={formData.firstName}
-              placeholder='first name'
+              placeholder="Enter First name"
               onChange={(e) => {
-                updateFormData('firstName', e.target.value);
-                verifyFirstNameInput(e.target.value);
+                updateFormData("firstName", e.target.value);
               }}
               required
               autoFocus
             />
           </div>
+          {createErrorMessage(
+            isFirstNameValid,
+            "First Name must be at least 3 characters long."
+          )}
         </div>
-        <div className='p-field mb-2'>
-          <label htmlFor='lastName'>Last Name</label>
-          <div className='p-inputgroup'>
+        <div className="p-field mb-2">
+          <label htmlFor="lastName">Last Name</label>
+          <div className="p-inputgroup">
             <InputText
-              id='lastName'
+              id="lastName"
               value={formData.lastName}
-              placeholder='last name'
+              placeholder="Enter last name"
               onChange={(e) => {
-                updateFormData('lastName', e.target.value);
-                verifyLastNameInput(e.target.value);
+                updateFormData("lastName", e.target.value);
               }}
               required
               autoFocus
@@ -114,36 +124,34 @@ const RegisterModal = (props: Props): JSX.Element => {
           </div>
           {createErrorMessage(
             isLastNameValid,
-            'Last Name must be at least 3 characters long.'
+            "Last Name must be at least 3 characters long."
           )}
         </div>
 
-        <div className='p-field mb-2'>
-          <label htmlFor='email'>Email Address</label>
-          <div className='p-inputgroup'>
+        <div className="p-field mb-2">
+          <label htmlFor="email">Email Address</label>
+          <div className="p-inputgroup">
             <InputText
-              id='email'
+              id="email"
               value={formData.email}
-              placeholder='email address'
+              placeholder="Enter email address"
               onChange={(e) => {
-                updateFormData('email', e.target.value);
-                verifyEmail();
+                updateFormData("email", e.target.value);
               }}
               required
             />
           </div>
-          {createErrorMessage(isEmailValid, 'Email is not valid.')}
+          {createErrorMessage(isEmailValid, "Email is not valid.")}
         </div>
-        <div className='p-field'>
-          <label htmlFor='password'>Password</label>
-          <div className='p-inputgroup'>
+        <div className="p-field">
+          <label htmlFor="password">Password</label>
+          <div className="p-inputgroup">
             <Password
-              id='password'
+              id="password"
               value={formData.password}
-              placeholder='password'
+              placeholder="Enter password"
               onChange={(e) => {
-                updateFormData('password', e.target.value);
-                verifyPassword();
+                updateFormData("password", e.target.value);
               }}
               toggleMask
               required
@@ -151,11 +159,31 @@ const RegisterModal = (props: Props): JSX.Element => {
           </div>
           {createErrorMessage(
             isPasswordValid,
-            'Password must be at least 6 characters long.'
+            "Password must be at least 6 characters long."
           )}
         </div>
-        <div className='d-flex align-items-center mt-2 mb-2'>
-          <button className='btn btn-primary w-100' onClick={onSubmit}>
+        <div className="p-field">
+          <label htmlFor="passwordCopy">Repeat Password</label>
+          <div className="p-inputgroup">
+            <Password
+              id="passwordCopy"
+              value={passwordCopy}
+              placeholder="Repeat password"
+              onChange={(e) => {
+                setPasswordCopy(e.target.value);
+              }}
+              toggleMask
+              feedback={false}
+              required
+            />
+          </div>
+          {createErrorMessage(
+            isPasswordEqual,
+            "Password must match."
+          )}
+        </div>
+        <div className="d-flex align-items-center mt-2 mb-2">
+          <button className="btn btn-primary w-100" onClick={onSubmit}>
             Register
           </button>
         </div>
@@ -164,7 +192,7 @@ const RegisterModal = (props: Props): JSX.Element => {
           <p>
             Already have an account? Click
             <span
-              className='text-primary register-link'
+              className="text-primary register-link"
               onClick={() => props.renderLoginModal()}
             >
               {` here `}

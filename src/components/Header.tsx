@@ -36,7 +36,7 @@ const Header = (): JSX.Element => {
           size='large'
           shape='circle'
           onClick={(e) =>
-            currentUser !== undefined ? menu.current?.toggle(e) : setShowModal(!showModal)
+            currentUser !== null ? menu.current?.toggle(e) : setShowModal(!showModal)
           }
           aria-controls='popup-menu'
           aria-haspopup

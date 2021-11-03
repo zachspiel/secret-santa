@@ -1,6 +1,6 @@
-import { configureStore } from '@reduxjs/toolkit';
-import membersReducer from '../redux/membersSlice';
-import groupsReducer from '../features/group/groupSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import membersReducer from "../redux/membersSlice";
+import groupsReducer from "../features/group/groupSlice";
 
 export const store = configureStore({
   reducer: {
