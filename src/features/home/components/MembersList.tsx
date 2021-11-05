@@ -84,15 +84,6 @@ const MembersList = (props: Props): JSX.Element => {
                                 {index + 1}
                                 <span className="ms-3">{member.name}</span>
                             </p>
-
-                            {santasList.length === 0 && (
-                                <Button
-                                    icon="pi pi-trash"
-                                    className="p-button-rounded p-button-danger p-button-text"
-                                    onClick={() => dispatch(removeMember(member))}
-                                />
-                            )}
-
                             {santasList.length > 0 && (
                                 <>
                                     <CopyToClipboard
@@ -103,12 +94,19 @@ const MembersList = (props: Props): JSX.Element => {
                                         onCopy={displayMessage}
                                     >
                                         <Button
+                                            icon="pi pi-copy"
                                             label="Copy invite"
                                             className="p-button-text"
                                         />
                                     </CopyToClipboard>
                                 </>
                             )}
+
+                            <Button
+                                icon="pi pi-trash"
+                                className="p-button-rounded p-button-danger p-button-text"
+                                onClick={() => dispatch(removeMember(member))}
+                            />
                         </div>
                     ))}
 
