@@ -1,26 +1,33 @@
 export interface GroupMember {
-  _id: string;
-  name: string;
-  wishList: string;
+    name: string;
+    wishlist?: string;
+    inviteLink?: string;
+    assignedTo?: string;
 }
 
 export interface Group {
-  _id: string;
-  name: string;
-  members: GroupMember[];
+    _id: string;
+    createdBy: string;
+    name: string;
+    members: GroupMember[];
 }
 
 export interface User {
-  _id: string;
-  name: string;
-  groups: Group[];
+    _id: string;
+    name: string;
+    groups: Group[];
 }
 
 export interface RegisterPayload {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
 }
 
-export type ModalTypes = 'LOGIN_MODAL' | 'REGISTER_MODAL';
+export interface LoginPayload {
+    email: string;
+    password: string;
+}
+
+export type ModalTypes = "LOGIN_MODAL" | "REGISTER_MODAL";

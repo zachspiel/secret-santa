@@ -1,12 +1,18 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import membersReducer from "../redux/membersSlice";
 import groupsReducer from "../features/group/groupSlice";
+import { api } from "./api";
 
-export const store = configureStore({
-  reducer: {
+const rootReducer = combineReducers({
     members: membersReducer,
     groups: groupsReducer,
-  },
+    [api.reducerPath]: api.reducer,
+});
+
+export const store = configureStore({
+    reducer: rootReducer,
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({ serializableCheck: false }).concat(api.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
