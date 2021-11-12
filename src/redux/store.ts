@@ -1,4 +1,4 @@
-import { combineReducers, configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import membersReducer from "../redux/membersSlice";
 import groupsReducer from "../features/group/groupSlice";
 import { api } from "./api";

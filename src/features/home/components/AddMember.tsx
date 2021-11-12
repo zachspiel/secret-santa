@@ -11,7 +11,7 @@ interface Props {
     error: string;
 }
 
-const AddMember = (props: Props) => {
+const AddMember = (props: Props): JSX.Element => {
     const dispatch = useAppDispatch();
     const santaList = useAppSelector((state) => state.members.santaList);
     const [newMember, setNewMember] = React.useState("");
@@ -26,6 +26,7 @@ const AddMember = (props: Props) => {
         } else {
             const strippedString = newMember.replace(/[^a-zA-Z ]/g, "");
             setNewMember("");
+            setNewMemberWishList("");
             setError("");
 
             if (santaList.length > 0) {
@@ -38,7 +39,7 @@ const AddMember = (props: Props) => {
 
     return (
         <div className="row justify-content-center">
-            <div className="col-md-3 col-sm-6 mt-3" style={{ zIndex: 1000 }}>
+            <div className="col-lg-5 col-md-3 col-sm-6 mt-3" style={{ zIndex: 1000 }}>
                 <div className="p-inputgroup">
                     <InputText
                         placeholder="Add person"
@@ -57,7 +58,7 @@ const AddMember = (props: Props) => {
                 </div>
                 {error.length > 0 && <small className="p-error d-block">{error}</small>}
                 {props.error.length > 0 && (
-                    <Message severity="error" text={props.error} className="mt-2 mb-2" />
+                    <Message severity="info" text={props.error} className="mt-2 mb-2" />
                 )}
             </div>
         </div>

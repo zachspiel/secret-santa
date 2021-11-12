@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 import { Menu } from "primereact/menu";
 import AccountModals from "../features/account/AccountModals";
 import { Button } from "primereact/button";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const Header = (): JSX.Element => {
     const menu = React.useRef<Menu>(null);
@@ -30,36 +31,43 @@ const Header = (): JSX.Element => {
     return (
         <>
             <div className="row justify-content-end">
-                <div className="col-2 mt-2">
+                <div className="col-md-2 col-lg-4 col-sm-8 mt-2 d-inline-flex justify-content-end">
                     <Button
                         label="Home"
-                        className={`p-button p-button-danger me-2 ${
+                        className={`p-button p-button-danger me-2 h-50 mt-3 ${
                             isOnHomePage ? "" : "p-button-outlined"
                         }`}
                         onClick={() => history.push("/")}
                     />
                     <Button
                         label="Groups"
-                        className={`p-button p-button-danger ${
-                            !isOnHomePage ? "" : "p-button-outlined"
+                        className={`p-button p-button-danger me-2 h-50  mt-3 ${
+                            currentLocation === "/groups" ? "" : "p-button-outlined"
                         }`}
                         onClick={() => history.push("/groups")}
                     />
+                    <Button
+                        label="FAQ"
+                        className={`p-button p-button-danger h-50 mt-3 ${
+                            currentLocation === "/faq" ? "" : "p-button-outlined"
+                        }`}
+                        onClick={() => history.push("/faq")}
+                    />
+                    <Menu model={items} popup ref={menu} id="popup-menu" />
+                    <Avatar
+                        icon="pi pi-user"
+                        className="m-2"
+                        size="large"
+                        shape="circle"
+                        onClick={(e) =>
+                            currentUser !== null
+                                ? menu.current?.toggle(e)
+                                : setShowModal(!showModal)
+                        }
+                        aria-controls="popup-menu"
+                        aria-haspopup
+                    />
                 </div>
-                <Menu model={items} popup ref={menu} id="popup-menu" />
-                <Avatar
-                    icon="pi pi-user"
-                    className="m-2"
-                    size="large"
-                    shape="circle"
-                    onClick={(e) =>
-                        currentUser !== null
-                            ? menu.current?.toggle(e)
-                            : setShowModal(!showModal)
-                    }
-                    aria-controls="popup-menu"
-                    aria-haspopup
-                />
             </div>
             <div className="row justify-content-center text-center">
                 <img

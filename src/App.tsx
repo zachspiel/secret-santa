@@ -8,6 +8,7 @@ import {
 import Home from "./features/home/Home";
 import Groups from "./features/group/Groups";
 import SelectedPerson from "./features/secretSanta/SecretSanta";
+import Faq from "./features/faq/Faq";
 
 const App = (props: BrowserRouterProps): JSX.Element => {
     return (
@@ -21,6 +22,9 @@ const App = (props: BrowserRouterProps): JSX.Element => {
                 </Route>
                 <Route path="/groups">
                     <Groups />
+                </Route>
+                <Route path="/faq">
+                    <Faq />
                 </Route>
             </Switch>
         </Router>

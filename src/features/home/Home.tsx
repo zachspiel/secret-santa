@@ -7,7 +7,7 @@ import GenerateList from "./components/GenerateList";
 import { Toast } from "primereact/toast";
 import Snowfall from "react-snowfall";
 
-const AddGroupMembers = () => {
+const AddGroupMembers = (): JSX.Element => {
     const members = useAppSelector((state) => state.members.membersList);
     const [error, setError] = React.useState("");
     const toast = React.useRef<Toast>(null);
@@ -27,8 +27,9 @@ const AddGroupMembers = () => {
             <div>
                 <AddMember members={members} error={error} />
 
-                <GenerateList setError={setError} />
-                {members.length > 0 && <MembersList createToast={displayToastMessage} />}
+                {members.length > 0 && (
+                    <MembersList createToast={displayToastMessage} setError={setError} />
+                )}
             </div>
             <Toast ref={toast} />
             <Snowfall color="white" />

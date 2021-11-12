@@ -4,7 +4,7 @@ import { Card } from "primereact/card";
 import Header from "../../components/Header";
 import { InputSwitch } from "primereact/inputswitch";
 import { DataTable } from "primereact/datatable";
-import { Column, ColumnBodyType, ColumnProps } from "primereact/column";
+import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
@@ -12,7 +12,6 @@ import EditGroup from "./EditGroup";
 import { useDeleteGroupByIdMutation, useGetAllGroupsQuery } from "../../redux/api";
 import { setGroups } from "./groupSlice";
 import Snowfall from "react-snowfall";
-import { Group } from "../../common/types";
 
 const Groups = (): JSX.Element => {
     const groups = useAppSelector((state) => state.groups.groups);
@@ -67,7 +66,7 @@ const Groups = (): JSX.Element => {
                 />
                 <Button
                     icon="pi pi-refresh"
-                    label="Reshuffle Secret Santa"
+                    label="Re-shuffle list"
                     className="p-button-outlined me-2"
                     onClick={() => {
                         setShowConfirmDelete(true);
@@ -137,7 +136,7 @@ const Groups = (): JSX.Element => {
                                         <Column field="name" header="Name" />
                                         <Column field="wishlist" header="Wishlist" />
                                         <Column field="inviteLink" header="Invite Link" />
-                                        <Column field="assignedTo" header="Assigned To" />
+                                        <Column field="assignedTo" header="Recepient" />
                                     </DataTable>
                                 </Card>
                             </div>
