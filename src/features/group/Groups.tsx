@@ -1,6 +1,7 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { Card } from "primereact/card";
+import { useHistory } from "react-router-dom";
 import Header from "../../components/Header";
 import { InputSwitch } from "primereact/inputswitch";
 import { DataTable } from "primereact/datatable";
@@ -20,8 +21,11 @@ const Groups = (): JSX.Element => {
     const [showConfirmDelete, setShowConfirmDelete] = React.useState(false);
     const [displaySecretSantas, setDisplaySecretSantas] = React.useState<number[]>([]);
     const toast = React.useRef<Toast>(null);
+    const history = useHistory();
     const dispatch = useAppDispatch();
-    const { data } = useGetAllGroupsQuery(localStorage.getItem("currentUser") ?? "");
+    const { data } = useGetAllGroupsQuery(
+        localStorage.getItem("currentUser") ?? skipToken,
+    );
     const [deleteGroup, { isSuccess, isError }] = useDeleteGroupByIdMutation();
 
     React.useEffect(() => {
@@ -146,8 +150,15 @@ const Groups = (): JSX.Element => {
                     }
                 })}
                 {groups.length === 0 && (
-                    <div className="col-3">
-                        <Card header="No Groups Available"></Card>
+                    <div className="col-3 ms-auto me-auto">
+                        <Card header="No Groups Available">
+                            <Button
+                                icon="pi pi-external-link"
+                                label="Click here to add a group"
+                                className="p-button p-button-outline me-2"
+                                onClick={() => history.push("/")}
+                            />
+                        </Card>
                     </div>
                 )}
             </div>
