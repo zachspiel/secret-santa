@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { clearMembers, removeMember, setSantasList } from "../../../redux/membersSlice";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useInsertGroupMutation } from "../../../redux/api";
-import { Group, GroupMember } from "../../../common/types";
+import type { Group, GroupMember } from "../../../common/types";
 import { Message } from "primereact/message";
 import { Tooltip } from "primereact/tooltip";
 import { InputText } from "primereact/inputtext";
@@ -195,7 +195,7 @@ const MembersList = (props: Props): JSX.Element => {
                         stripedRows={true}
                         scrollable
                         scrollHeight="250px"
-                        className="p-datatable-responsive-demo"
+                        className="p-datatable-responsive"
                     >
                         <Column field="name" header="Name" body={nameTemplate} />
                         <Column

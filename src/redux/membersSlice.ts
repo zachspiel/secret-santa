@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { GroupMember } from "../common/types";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import type { GroupMember } from "../common/types";
 
 interface MembersSlice {
     isUserSignedIn: boolean;

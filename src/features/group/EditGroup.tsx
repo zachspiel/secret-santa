@@ -1,7 +1,7 @@
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import React from "react";
-import { Group } from "../../common/types";
+import type { Group } from "../../common/types";
 
 interface Props {
     group: Group;

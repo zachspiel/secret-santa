@@ -1,4 +1,4 @@
-import { GroupMember } from "./types";
+import type { GroupMember } from "./types";
 
 const shuffleArray = (members: GroupMember[]): GroupMember[] => {
     const _members = [...members];

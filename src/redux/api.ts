@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Group, User } from "../common/types";
+import type { Group, User } from "../common/types";
 
 type Payload = {
     _id: string;

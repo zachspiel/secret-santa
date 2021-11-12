@@ -13,9 +13,15 @@ import EditGroup from "./EditGroup";
 import { useDeleteGroupByIdMutation, useGetAllGroupsQuery } from "../../redux/api";
 import { setGroups } from "./groupSlice";
 import Snowfall from "react-snowfall";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
+import mockGroups from "./mockData.json";
+import { findIndexById } from "../../common/util";
+import { GroupMember } from "../../common/types";
+import "../home/scss/styles.scss";
 
 const Groups = (): JSX.Element => {
     const groups = useAppSelector((state) => state.groups.groups);
+    const members = useAppSelector((state) => state.members.membersList);
     const [editingGroupIndex, setEditingGroupIndex] = React.useState(-1);
     const [deleteGroupIndex, setDeleteGroupIndex] = React.useState(-1);
     const [showConfirmDelete, setShowConfirmDelete] = React.useState(false);
@@ -23,9 +29,11 @@ const Groups = (): JSX.Element => {
     const toast = React.useRef<Toast>(null);
     const history = useHistory();
     const dispatch = useAppDispatch();
-    const { data } = useGetAllGroupsQuery(
+    const data = mockGroups.groups;
+    /* useGetAllGroupsQuery(
         localStorage.getItem("currentUser") ?? skipToken,
-    );
+    ); */
+
     const [deleteGroup, { isSuccess, isError }] = useDeleteGroupByIdMutation();
 
     React.useEffect(() => {
@@ -85,11 +93,22 @@ const Groups = (): JSX.Element => {
             </div>
         );
     };
-    /*
-    const secretSantaTemplate = (rowData: Group, props: ColumnProps): JSX.Element => {
-        return <span>{rowData.assignedTo}</span>
-    }
-*/
+
+    const secretSantaTemplate = (rowData: GroupMember, index: number): JSX.Element => {
+        if (groups.length === 0 || !displaySecretSantas.includes(index)) {
+            return <div className="d-none"></div>;
+        }
+        const memberIndex = findIndexById(rowData.name, groups[index].members);
+        return (
+            <div className="pb-3 pt-3 d-flex w-100">
+                <span className="p-column-title">Recepient</span>
+                <span className="w-100">
+                    {groups[index].members[memberIndex]?.assignedTo ?? ""}
+                </span>
+            </div>
+        );
+    };
+
     return (
         <div className="container-fluid text-center">
             <Header />
@@ -136,11 +155,18 @@ const Groups = (): JSX.Element => {
                                         stripedRows={true}
                                         scrollable
                                         scrollHeight="150px"
+                                        className="p-datatable-responsive"
                                     >
                                         <Column field="name" header="Name" />
                                         <Column field="wishlist" header="Wishlist" />
                                         <Column field="inviteLink" header="Invite Link" />
-                                        <Column field="assignedTo" header="Recepient" />
+                                        <Column
+                                            field="assignedTo"
+                                            header="Recepient"
+                                            body={(rowData: GroupMember) =>
+                                                secretSantaTemplate(rowData, index)
+                                            }
+                                        />
                                     </DataTable>
                                 </Card>
                             </div>

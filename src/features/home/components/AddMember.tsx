@@ -3,7 +3,7 @@ import { InputText } from "primereact/inputtext";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { addMember, setSantasList } from "../../../redux/membersSlice";
 import { Button } from "primereact/button";
-import { GroupMember } from "../../../common/types";
+import type { GroupMember } from "../../../common/types";
 import { Message } from "primereact/message";
 
 interface Props {

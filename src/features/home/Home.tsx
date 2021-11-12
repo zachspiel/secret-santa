@@ -3,7 +3,6 @@ import { useAppSelector } from "../../redux/hooks";
 import Header from "../../components/Header";
 import AddMember from "./components/AddMember";
 import MembersList from "./components/MembersList";
-import GenerateList from "./components/GenerateList";
 import { Toast } from "primereact/toast";
 import Snowfall from "react-snowfall";
 

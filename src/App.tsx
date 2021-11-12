@@ -1,10 +1,6 @@
 import React from "react";
-import {
-    Route,
-    BrowserRouter as Router,
-    Switch,
-    BrowserRouterProps,
-} from "react-router-dom";
+import type { BrowserRouterProps } from "react-router-dom";
+import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import Home from "./features/home/Home";
 import Groups from "./features/group/Groups";
 import SelectedPerson from "./features/secretSanta/SecretSanta";

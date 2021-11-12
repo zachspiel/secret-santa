@@ -1,5 +1,5 @@
 import React from "react";
-import { ModalTypes } from "../../common/types";
+import type { ModalTypes } from "../../common/types";
 import RegisterModal from "./RegisterModal";
 import LoginModal from "./LoginModal";
 

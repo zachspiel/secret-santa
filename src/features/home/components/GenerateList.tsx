@@ -18,7 +18,7 @@ const GenerateList = (props: Props): JSX.Element => {
             setError("There must be at least three members in a group.");
         } else {
             setError("");
-            shuffleArray();
+            shuffleArray(members);
         }
     }, [members, setError]);
 

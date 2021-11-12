@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Password } from "primereact/password";
 import { InputText } from "primereact/inputtext";
-import { RegisterPayload } from "../../common/types";
+import type { RegisterPayload } from "../../common/types";
 import { Dialog } from "primereact/dialog";
 import { Message } from "primereact/message";
 import { useRegisterUserMutation } from "../../redux/api";

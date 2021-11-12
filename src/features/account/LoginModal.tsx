@@ -2,7 +2,7 @@ import React from "react";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Dialog } from "primereact/dialog";
-import { LoginPayload } from "../../common/types";
+import type { LoginPayload } from "../../common/types";
 import { useLoginUserMutation } from "../../redux/api";
 import { useAppDispatch } from "../../redux/hooks";
 import { setSignInStatus } from "../../redux/membersSlice";
@@ -16,7 +16,6 @@ interface Props {
 const LoginModal = (props: Props): JSX.Element => {
     const [isEmailValid, setIsEmailValid] = React.useState(true);
     const [isPasswordValid, setIsPasswordValid] = React.useState(true);
-    const [password, setPassword] = React.useState("");
     const [formData, setFormData] = React.useState<LoginPayload>({
         email: "",
         password: "",
@@ -39,7 +38,6 @@ const LoginModal = (props: Props): JSX.Element => {
 
         if (isEmailValid && isPasswordValid) {
             loginUser(formData);
-            console.log("Submitted");
         }
     };
 
@@ -90,8 +88,8 @@ const LoginModal = (props: Props): JSX.Element => {
                     <div className="p-inputgroup">
                         <Password
                             id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            value={formData.password}
+                            onChange={(e) => updateFormData("password", e.target.value)}
                             toggleMask
                             required
                             feedback={false}
