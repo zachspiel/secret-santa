@@ -23,4 +23,20 @@ const findIndexById = (name: string, members: GroupMember[]): number => {
     return NOT_FOUND;
 };
 
-export { shuffleArray, findIndexById };
+const createUrl = (
+    selectedMember: string,
+    assignee: string,
+    wishlist?: string,
+): string => {
+    return `${
+        window.location.hostname
+    }:3000/getSecretSanta/?name=${selectedMember}&selected=${encryptString(
+        assignee,
+    )}&wishlist=${wishlist !== undefined ? encryptString(wishlist) : ""}`;
+};
+
+const encryptString = (stringToEncrypt: string): string => {
+    return btoa(stringToEncrypt);
+};
+
+export { shuffleArray, findIndexById, createUrl };

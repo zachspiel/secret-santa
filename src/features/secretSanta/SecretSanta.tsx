@@ -1,6 +1,7 @@
 import React from "react";
-import presentImage from "../../images/present-opening.gif";
-import sex from "../../images/sex.gif";
+import confettiAnimation from "../../images/confetti.gif";
+import present from "../../images/present-bouncing.gif";
+import reindeer from "../../images/reindeer.gif";
 import santa from "../../images/santa-sled2.gif";
 import { Messages } from "primereact/messages";
 import { useAppQuery } from "../../redux/hooks";
@@ -10,11 +11,13 @@ import Snowfall from "react-snowfall";
 const SecretSanta = (): JSX.Element => {
     const [displayResult, setDisplayResult] = React.useState(false);
     const [displaySanta, setDisplaySanta] = React.useState(false);
+    const [hasClicked, setHasClicked] = React.useState(false);
     const message = React.useRef<Messages>(null);
 
     const query = useAppQuery();
     const secretSanta = query.get("name");
     const assignee = query.get("selected");
+    const wishlist = query.get("wishlist");
 
     const decryptString = (stringToDecript: string | null): string => {
         if (stringToDecript === null) {
@@ -23,7 +26,13 @@ const SecretSanta = (): JSX.Element => {
         return atob(stringToDecript);
     };
 
-    setTimeout(() => setDisplayResult(true), 4650);
+    const decriptWishlist = (wishlist: string | null): string => {
+        if (wishlist === null || wishlist.length === 0) {
+            return "";
+        }
+
+        return atob(wishlist);
+    };
 
     const openWishList = (newUrl: string): void => {
         setDisplaySanta(true);
@@ -39,6 +48,14 @@ const SecretSanta = (): JSX.Element => {
             setDisplaySanta(false);
             window.open(newUrl, "_blank");
         }, 5000);
+    };
+
+    const playPresentAnimation = () => {
+        setHasClicked(true);
+        setTimeout(() => {
+            setHasClicked(false);
+            setDisplayResult(true);
+        }, 1050);
     };
 
     return (
@@ -59,28 +76,44 @@ const SecretSanta = (): JSX.Element => {
                                     </b>
                                     {`"s Secret Santa!`}
                                 </p>
-                                <p>
-                                    Open{" "}
-                                    <b
-                                        className="text-primary"
-                                        onClick={() =>
-                                            openWishList("https://www.google.com")
-                                        }
-                                    >
-                                        {decryptString(assignee)}
-                                    </b>
-                                    {`"s wishlist`}
-                                </p>
+                                {decriptWishlist(wishlist).length !== 0 && (
+                                    <p>
+                                        Open{" "}
+                                        <b
+                                            className="text-primary"
+                                            onClick={() =>
+                                                openWishList(decriptWishlist(wishlist))
+                                            }
+                                        >
+                                            {decryptString(assignee)}
+                                        </b>
+                                        {`"s wishlist`}
+                                    </p>
+                                )}
                                 <Messages ref={message} />
-                                <img src={sex} alt="sex" height={150} />
+                                <img src={reindeer} alt="sex" height={150} />
                             </div>
                         )}
-                        {!displayResult && (
-                            <img
-                                src={presentImage}
-                                alt="present"
-                                style={{ maxHeight: "230px" }}
-                            />
+                        {!displayResult && hasClicked && (
+                            <>
+                                <h5>Now opening...</h5>
+                                <img
+                                    src={confettiAnimation}
+                                    alt="present opening"
+                                    style={{ maxHeight: "230px" }}
+                                />
+                            </>
+                        )}
+
+                        {!displayResult && !hasClicked && (
+                            <div onClick={() => playPresentAnimation()}>
+                                <h5>Click to view your assigned person!</h5>
+                                <img
+                                    src={present}
+                                    alt="present bouncing"
+                                    style={{ maxHeight: "230px" }}
+                                />
+                            </div>
                         )}
                     </div>
                 </div>

@@ -5,7 +5,7 @@ import { Dialog } from "primereact/dialog";
 import type { LoginPayload } from "../../common/types";
 import { useLoginUserMutation } from "../../redux/api";
 import { useAppDispatch } from "../../redux/hooks";
-import { setSignInStatus } from "../../redux/membersSlice";
+import { setSignInStatus } from "../../appSlice";
 
 interface Props {
     isVisible: boolean;
@@ -22,6 +22,7 @@ const LoginModal = (props: Props): JSX.Element => {
     });
     const dispatch = useAppDispatch();
     const [loginUser, { isError, data }] = useLoginUserMutation();
+    const { isVisible, renderRegisterModal, onHide } = props;
 
     React.useEffect(() => {
         if (!isError && data?.data !== undefined) {
@@ -30,7 +31,7 @@ const LoginModal = (props: Props): JSX.Element => {
             dispatch(setSignInStatus(true));
             props.onHide();
         }
-    }, [isError, data, history]);
+    }, [dispatch, isError, data, onHide]);
 
     const onSubmit = () => {
         verifyEmail();
@@ -65,7 +66,7 @@ const LoginModal = (props: Props): JSX.Element => {
     };
 
     return (
-        <Dialog header="Login" visible={props.isVisible} onHide={props.onHide}>
+        <Dialog header="Login" visible={isVisible} onHide={onHide}>
             <div className="p-grid p-fluid col">
                 <div className="p-field">
                     <label htmlFor="name">Email Address</label>
@@ -112,7 +113,7 @@ const LoginModal = (props: Props): JSX.Element => {
                         {`Don't have an account? Click`}
                         <span
                             className="text-primary register-link"
-                            onClick={() => props.renderRegisterModal()}
+                            onClick={() => renderRegisterModal()}
                         >
                             {` here `}
                         </span>

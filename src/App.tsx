@@ -1,5 +1,5 @@
 import React from "react";
-import type { BrowserRouterProps } from "react-router-dom";
+import { BrowserRouterProps } from "react-router-dom";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import Home from "./features/home/Home";
 import Groups from "./features/group/Groups";

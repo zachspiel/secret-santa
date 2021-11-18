@@ -1,11 +1,12 @@
 import React from "react";
 import { Button } from "primereact/button";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { setSantasList } from "../../../redux/membersSlice";
 import { shuffleArray } from "../../../common/util";
+import { setMembersList } from "../../../redux/membersSlice";
 
 interface Props {
     setError: (error: string) => void;
+    createToast: (message: string, summary: string, severity: string) => void;
 }
 
 const GenerateList = (props: Props): JSX.Element => {
@@ -15,7 +16,7 @@ const GenerateList = (props: Props): JSX.Element => {
 
     React.useEffect(() => {
         if (members.length > 0 && members.length < 3) {
-            setError("There must be at least three members in a group.");
+            setError("Please add at least three members to create a group.");
         } else {
             setError("");
             shuffleArray(members);
@@ -23,16 +24,21 @@ const GenerateList = (props: Props): JSX.Element => {
     }, [members, setError]);
 
     const generateList = () => {
-        props.setError("");
+        const _members = [...members];
+        const santaList = shuffleArray(_members);
 
-        dispatch(setSantasList(shuffleArray(members)));
+        _members.forEach((member, index) => {
+            _members[index] = { ...member, assignedTo: santaList[index].name };
+        });
+
+        props.createToast("Group successfully re-shuffled", "Success", "success");
+        dispatch(setMembersList(_members));
     };
 
     return (
         <Button
             label="Re-shuffle list"
-            icon="pi pi-refresh"
-            className="p-button-success mb-2"
+            className="p-button-text"
             onClick={() => generateList()}
             disabled={members.length < 3}
         />

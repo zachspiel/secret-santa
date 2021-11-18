@@ -2,7 +2,7 @@ export interface GroupMember {
     name: string;
     wishlist?: string;
     inviteLink?: string;
-    assignedTo?: string;
+    assignedTo: string;
 }
 
 export interface Group {
@@ -14,7 +14,8 @@ export interface Group {
 
 export interface User {
     _id: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     groups: Group[];
 }
 

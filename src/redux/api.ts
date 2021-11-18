@@ -50,6 +50,7 @@ export const api = createApi({
                 method: "POST",
                 body: body,
             }),
+            invalidatesTags: ["GROUPS"],
         }),
         updateGroupById: builder.mutation({
             query: (data: Payload) => ({
@@ -71,6 +72,7 @@ export const api = createApi({
                 url: "user/login",
                 method: "POST",
                 body: body,
+                invalidatesTags: ["GROUPS, USER"],
             }),
         }),
         registerUser: builder.mutation<Authenticationresponse, RegisterPayload>({
@@ -80,7 +82,7 @@ export const api = createApi({
                 body: body,
             }),
         }),
-        getUserById: builder.mutation<User, string>({
+        getUserById: builder.query<User, string>({
             query: (id: string) => ({
                 url: `user/${id}`,
                 providesTags: ["USER"],
@@ -104,6 +106,6 @@ export const {
     useDeleteGroupByIdMutation,
     useLoginUserMutation,
     useRegisterUserMutation,
-    useGetUserByIdMutation,
+    useGetUserByIdQuery,
     useUpdateUserByIdMutation,
 } = api;

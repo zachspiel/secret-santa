@@ -6,7 +6,7 @@ import { Dialog } from "primereact/dialog";
 import { Message } from "primereact/message";
 import { useRegisterUserMutation } from "../../redux/api";
 import { useAppDispatch } from "../../redux/hooks";
-import { setSignInStatus } from "../../redux/membersSlice";
+import { setSignInStatus } from "../../appSlice";
 
 interface Props {
     isVisible: boolean;
@@ -29,7 +29,7 @@ const RegisterModal = (props: Props): JSX.Element => {
     });
     const dispatch = useAppDispatch();
     const [registerUser, { isError, data }] = useRegisterUserMutation();
-
+    const { isVisible, renderLoginModal, onHide } = props;
     const isValid =
         isFirstNameValid &&
         isLastNameValid &&
@@ -50,9 +50,9 @@ const RegisterModal = (props: Props): JSX.Element => {
             localStorage.setItem("token", data.data.token);
             localStorage.setItem("currentUser", data.data.currentUser);
             dispatch(setSignInStatus(true));
-            props.onHide();
+            onHide();
         }
-    }, [isError, data, history]);
+    }, [dispatch, isError, data, onHide]);
 
     const updateFormData = (name: keyof RegisterPayload, value: string) => {
         const _formData = { ...formData };
@@ -90,7 +90,7 @@ const RegisterModal = (props: Props): JSX.Element => {
     };
 
     return (
-        <Dialog header="Register" onHide={() => props.onHide()} visible={props.isVisible}>
+        <Dialog header="Register" onHide={() => onHide} visible={isVisible}>
             <div className="p-grid p-fluid col">
                 <div className="p-field">
                     <label htmlFor="name">First Name</label>
@@ -200,7 +200,7 @@ const RegisterModal = (props: Props): JSX.Element => {
                         Already have an account? Click
                         <span
                             className="text-primary register-link"
-                            onClick={() => props.renderLoginModal()}
+                            onClick={() => renderLoginModal}
                         >
                             {` here `}
                         </span>

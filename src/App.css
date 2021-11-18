@@ -39,3 +39,12 @@ body {
 .p-datatable-scrollable-body {
     scrollbar-width: thin !important;
 }
+
+.p-dialog.p-confirm-dialog .p-confirm-dialog-icon {
+    color: red;
+}
+
+.p-toolbar {
+    background: #ffffff;
+    border: none;
+}

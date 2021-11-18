@@ -3,15 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { GroupMember } from "../common/types";
 
 interface MembersSlice {
-    isUserSignedIn: boolean;
     membersList: GroupMember[];
-    santaList: GroupMember[];
 }
 
 const initialState: MembersSlice = {
-    isUserSignedIn: localStorage.getItem("currentUser") !== null,
     membersList: [],
-    santaList: [],
 };
 
 export const membersSlice = createSlice({
@@ -26,18 +22,15 @@ export const membersSlice = createSlice({
                 (member) => member.name !== action.payload.name,
             );
         },
+        setMembersList: (state, action: PayloadAction<GroupMember[]>) => {
+            state.membersList = [...action.payload];
+        },
         clearMembers: (state) => {
             state.membersList = [];
-        },
-        setSantasList: (state, action: PayloadAction<GroupMember[]>) => {
-            state.santaList = [...action.payload];
-        },
-        setSignInStatus: (state, action: PayloadAction<boolean>) => {
-            state.isUserSignedIn = action.payload;
         },
     },
 });
 
-export const { addMember, removeMember, setSantasList, setSignInStatus, clearMembers } =
+export const { addMember, removeMember, setMembersList, clearMembers } =
     membersSlice.actions;
 export default membersSlice.reducer;
