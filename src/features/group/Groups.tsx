@@ -22,12 +22,10 @@ import groupImage from "../../images/undraw_Having_fun_re_vj4h.png";
 
 const Groups = (): JSX.Element => {
     const groups = useAppSelector((state) => state.groups.groups);
-    const members = useAppSelector((state) => state.members.membersList);
     const isUserSignedIn = useAppSelector((state) => state.app.isUserSignedIn);
     const [editingGroupIndex, setEditingGroupIndex] = React.useState(-1);
     const [deleteGroupIndex, setDeleteGroupIndex] = React.useState(-1);
     const [showConfirmDelete, setShowConfirmDelete] = React.useState(false);
-    const [showConfirmDeleteMember, setShowConfirmDeleteMember] = React.useState(false);
     const [displaySecretSantas, setDisplaySecretSantas] = React.useState<number[]>([]);
     const toast = React.useRef<Toast>(null);
     const history = useHistory();
@@ -147,7 +145,22 @@ const Groups = (): JSX.Element => {
                 icon="pi pi-exclamation-triangle"
                 accept={() => updateGroup({_id: groups[editingGroupIndex]._id, body: {members: [groups[editingGroupIndex].members]}}
                 reject={() => setShowConfirmDelete(false)}
-            /> */
+            /> 
+            
+            
+            
+            
+            
+             <GroupTable
+                                    tableData={group.members}
+                                    createToast={displayMessage}
+                                    displaySecretSantas={displaySecretSantas.includes(
+                                        index,
+                                    )}
+                                    displayActionColumn={editingGroupIndex === index}
+                                />
+            
+            */
     return (
         <div className="container-fluid text-center">
             <Header />
@@ -183,16 +196,7 @@ const Groups = (): JSX.Element => {
                                     </div>
                                 }
                                 footer={Footer(index)}
-                            >
-                                <GroupTable
-                                    tableData={group.members}
-                                    createToast={displayMessage}
-                                    displaySecretSantas={displaySecretSantas.includes(
-                                        index,
-                                    )}
-                                    displayActionColumn={editingGroupIndex === index}
-                                />
-                            </Card>
+                            ></Card>
                         </div>
                     );
                 })}

@@ -5,7 +5,7 @@ import Home from "./features/home/Home";
 import Groups from "./features/group/Groups";
 import SelectedPerson from "./features/secretSanta/SecretSanta";
 import Faq from "./features/faq/Faq";
-
+//background-color: #81b3f5 !important;
 const App = (props: BrowserRouterProps): JSX.Element => {
     return (
         <Router {...props}>

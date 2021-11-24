@@ -107,7 +107,7 @@ const Header = (): JSX.Element => {
                 <img
                     src={santaImage}
                     alt="Santa"
-                    style={{ width: "6rem", marginTop: "2rem" }}
+                    style={{ width: "6rem", marginTop: "1rem" }}
                 />
                 <h3>
                     <b>Secret Santa Generator</b>

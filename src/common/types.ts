@@ -1,8 +1,9 @@
 export interface GroupMember {
     name: string;
+    assignedTo: string;
     wishlist?: string;
     inviteLink?: string;
-    assignedTo: string;
+    notes?: string;
 }
 
 export interface Group {

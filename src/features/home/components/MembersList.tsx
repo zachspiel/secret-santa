@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "primereact/button";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { removeMember } from "../../../redux/membersSlice";
+import { removeMember, setMembersList } from "../../../redux/membersSlice";
 import { Tooltip } from "primereact/tooltip";
 import { InputSwitch } from "primereact/inputswitch";
 import { Toolbar } from "primereact/toolbar";
@@ -9,6 +9,7 @@ import "../scss/styles.scss";
 import GenerateList from "./GenerateList";
 import GroupTable from "../../groupTable/GroupTable";
 import CreateGroup from "./CreateGroup";
+import { InputText } from "primereact/inputtext";
 
 interface Props {
     createToast: (message: string, summary: string, severity: string) => void;
@@ -42,19 +43,42 @@ const MembersList = (props: Props): JSX.Element => {
             </>
         );
     };
-    return (
-        <div className="row justify-content-center">
-            <div className="col-lg-6 col-md-5 col-sm-6 mt-3" style={{ zIndex: 1000 }}>
-                <div className="card p-3 border-0 mb-5">
-                    <Toolbar className="p-mb-4" right={rightToolbarTemplate}></Toolbar>
 
-                    <GroupTable
+    /**
+     * 
+     *  <GroupTable
                         tableData={members}
                         displaySecretSantas={displaySecretSantas}
                         displayActionColumn={true}
                         createToast={props.createToast}
                         onRemoveMember={(member) => dispatch(removeMember(member))}
                     />
+     */
+    return (
+        <div className="row justify-content-center">
+            <div className="col-lg-6 col-md-5 col-sm-6 mt-3" style={{ zIndex: 1000 }}>
+                <div className="card p-3 border-0 mb-5">
+                    <Toolbar className="p-mb-4" right={rightToolbarTemplate}></Toolbar>
+
+                    {members.map((member, index) => (
+                        <div className="d-flex" key={index}>
+                            <div className="d-flex justify-content-between">
+                                <InputText
+                                    value={members[index].name}
+                                    placeholder={`Enter member ${index + 1}`}
+                                    onChange={(e) => {
+                                        const _members = [...members];
+                                        _members[index] = {
+                                            ..._members[index],
+                                            name: e.target.value,
+                                        };
+                                        dispatch(setMembersList(_members));
+                                    }}
+                                />
+                                <i className="pi pi-times d-flex text-muted mt-2 ms-2" />
+                            </div>
+                        </div>
+                    ))}
 
                     {!isUserSignedIn && (
                         <h6>To save this group, please sign in above.</h6>
@@ -71,12 +95,6 @@ const MembersList = (props: Props): JSX.Element => {
                             />
                         </div>
                     )}
-
-                    <CreateGroup
-                        isVisible={showNewGroupInput && members.length >= 3}
-                        onHide={() => setShowNewGroupInput(false)}
-                        createToast={createToast}
-                    />
                 </div>
             </div>
         </div>

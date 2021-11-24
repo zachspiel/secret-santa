@@ -4,10 +4,12 @@ import type { GroupMember } from "../common/types";
 
 interface MembersSlice {
     membersList: GroupMember[];
+    exclusions: GroupMember[][];
 }
 
 const initialState: MembersSlice = {
     membersList: [],
+    exclusions: [],
 };
 
 export const membersSlice = createSlice({
@@ -28,9 +30,12 @@ export const membersSlice = createSlice({
         clearMembers: (state) => {
             state.membersList = [];
         },
+        setExclusions: (state, action: PayloadAction<GroupMember[][]>) => {
+            state.exclusions = action.payload;
+        },
     },
 });
 
-export const { addMember, removeMember, setMembersList, clearMembers } =
+export const { addMember, removeMember, setMembersList, clearMembers, setExclusions } =
     membersSlice.actions;
 export default membersSlice.reducer;

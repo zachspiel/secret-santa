@@ -5,7 +5,7 @@ body {
 }
 
 body {
-    background-color: #81b3f5 !important;
+    background-color: #fff !important;
 }
 
 .members-list {
@@ -47,4 +47,21 @@ body {
 .p-toolbar {
     background: #ffffff;
     border: none;
+}
+
+.p-colorpicker-preview {
+    width: 100%;
+}
+
+.p-inplace-content .p-button.p-button-icon-only {
+    padding: 0 !important;
+}
+
+.p-steps .p-steps-item .p-menuitem-link {
+    background: none;
+}
+
+.card {
+    box-sizing: border-box;
+    border: 0 solid #e5e7eb;
 }

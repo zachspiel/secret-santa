@@ -81,7 +81,9 @@ const GroupTable = (props: Props): JSX.Element => {
                 <Inplace closable>
                     <InplaceDisplay>View</InplaceDisplay>
                     <InplaceContent>
-                        <span>{rowData.assignedTo}</span>
+                        <div className="d-inline-flex">
+                            <span>{rowData.assignedTo}</span>
+                        </div>
                     </InplaceContent>
                 </Inplace>
             );
@@ -114,6 +116,7 @@ const GroupTable = (props: Props): JSX.Element => {
         >
             <Column field="name" header="Name" body={nameTemplate} />
             <Column field="wishlist" header="Wishlist" body={wishlistTemplate} />
+            <Column field="notes" header="Notes" />
             <Column field="assignedTo" header="Recepient" body={secretSantaTemplate} />
             <Column field="inviteLink" header="Invite Link" body={inviteLinkTemplate} />
             {props.displayActionColumn && (

@@ -8,6 +8,7 @@ import { createUrl } from "../../../common/util";
 import { Message } from "primereact/message";
 import { useInsertGroupMutation } from "../../../redux/api";
 import { clearMembers } from "../../../redux/membersSlice";
+import { Calendar } from "primereact/calendar";
 import { useHistory } from "react-router";
 
 interface Props {
@@ -16,23 +17,15 @@ interface Props {
     createToast: (message: string, summary: string, severity: string) => void;
 }
 
-const CreateGroup = (props: Props): JSX.Element => {
+const CreateGroup = (): JSX.Element => {
     const members = useAppSelector((state) => state.members.membersList);
     const [newGroupName, setNewGroupName] = React.useState("");
+    const [date, setDate] = React.useState("");
     const [newGroupNameError, setNewGroupNameError] = React.useState(false);
+    const currentYear = new Date().getFullYear();
     const [saveGroup, { data }] = useInsertGroupMutation();
     const history = useHistory();
     const dispatch = useAppDispatch();
-    const { createToast } = props;
-
-    React.useEffect(() => {
-        if (data?.name !== undefined) {
-            props.onHide();
-            setNewGroupName("");
-            dispatch(clearMembers());
-            props.createToast("Group Successfully created", "Success", "success");
-        }
-    }, [dispatch, data, createToast, history]);
 
     const onSaveGroup = () => {
         const _members: GroupMember[] = [];
@@ -64,44 +57,37 @@ const CreateGroup = (props: Props): JSX.Element => {
     };
 
     return (
-        <Dialog
-            header="Save a new group"
-            visible={props.isVisible}
-            style={{ width: "50vw" }}
-            onHide={() => props.onHide()}
-        >
-            <div>
-                <div className="row mt-3">
-                    <div className="col-8">
-                        <InputText
-                            value={newGroupName}
-                            placeholder={"Enter new group name"}
-                            className="w-100"
-                            onChange={(e) => setNewGroupName(e.target.value)}
-                        />
-                    </div>
-                    <div className="col-4 d-flex justify-content-end">
-                        {props.isVisible && newGroupNameError && (
-                            <Message
-                                severity="error"
-                                text={`Group name cannot be empty`}
-                                className="mt-2 mb-2"
-                            />
-                        )}
-                        <Button
-                            label="Cancel"
-                            className="p-button-outlined me-2"
-                            onClick={() => {
-                                setNewGroupName("");
-                                setNewGroupNameError(false);
-                                props.onHide();
-                            }}
-                        />
-                        <Button label="Save" onClick={() => onSaveGroup()} />
-                    </div>
+        <div>
+            <div className="row mt-3 justify-content-center">
+                <div className="col-md-3 col-sm-6 text-start">
+                    <h6>Group name</h6>
+                    <InputText
+                        value={newGroupName}
+                        placeholder={"Enter name for group"}
+                        className="w-100"
+                        onChange={(e) => setNewGroupName(e.target.value)}
+                    />
+
+                    <h6 className="mt-2">
+                        Date of gift exchange
+                        <span className="text-muted">- optional</span>
+                    </h6>
+                    <Calendar
+                        id="icon"
+                        dateFormat="yy-mm-dd"
+                        placeholder="Select date"
+                        className="w-100 mb-2"
+                        value={new Date(date)}
+                        onChange={(e) => setDate(e.value?.toString() ?? "")}
+                        monthNavigator
+                        yearNavigator
+                        yearRange={`1990:${currentYear}`}
+                        showIcon
+                    />
+                    <Button label="Save" onClick={() => onSaveGroup()} />
                 </div>
             </div>
-        </Dialog>
+        </div>
     );
 };
 
