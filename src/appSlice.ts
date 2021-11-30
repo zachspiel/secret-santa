@@ -3,10 +3,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 interface AppSlice {
     isUserSignedIn: boolean;
+    currentStep: number;
 }
 
 const initialState: AppSlice = {
     isUserSignedIn: localStorage.getItem("currentUser") !== null,
+    currentStep: 0,
 };
 
 export const appSlice = createSlice({
@@ -16,8 +18,11 @@ export const appSlice = createSlice({
         setSignInStatus: (state, action: PayloadAction<boolean>) => {
             state.isUserSignedIn = action.payload;
         },
-    },
+        setCurrentStep: (state, action: PayloadAction<number>) => {
+            state.currentStep = action.payload
+        }
+    },  
 });
 
-export const { setSignInStatus } = appSlice.actions;
+export const { setSignInStatus, setCurrentStep } = appSlice.actions;
 export default appSlice.reducer;

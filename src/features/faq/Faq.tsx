@@ -15,8 +15,7 @@ const Faq = (): JSX.Element => {
                             <AccordionTab header="How do I create a Secret Sanata group?">
                                 <p>
                                     Go to the <a href="/">home page</a> and add at least
-                                    three members, which will automatically generate a
-                                    Secret Santa list. Please note that in order to save
+                                    three members, to get started. Please note that in order to save
                                     this group, you must create an account or sign in.
                                 </p>
                             </AccordionTab>

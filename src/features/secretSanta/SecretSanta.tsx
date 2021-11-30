@@ -18,6 +18,10 @@ const SecretSanta = (): JSX.Element => {
     const secretSanta = query.get("name");
     const assignee = query.get("selected");
     const wishlist = query.get("wishlist");
+    const budget = query.get("budget");
+    const currencySymbol = query.get("currency");
+    const notes = query.get("notes");
+    const date = query.get("date");
 
     const decryptString = (stringToDecript: string | null): string => {
         if (stringToDecript === null) {
@@ -58,6 +62,18 @@ const SecretSanta = (): JSX.Element => {
         }, 1050);
     };
 
+    const getFormattedDate = (): string => {
+        if(date !== null) {
+            const dateObj = new Date(decryptString(date));
+            const month = dateObj.getUTCMonth() + 1;
+            const day = dateObj.getUTCDate();
+            const year = dateObj.getUTCFullYear();
+            return `${month}/${day}/${year}`
+        }
+
+        return "";
+    }
+    
     return (
         <div className="container-fluid text-center">
             <Header />
@@ -74,8 +90,25 @@ const SecretSanta = (): JSX.Element => {
                                     <b className="text-primary">
                                         {decryptString(assignee)}
                                     </b>
-                                    {`"s Secret Santa!`}
+                                    {`'s Secret Santa!`}
                                 </p>
+                                {budget !== "" && (
+                                    <p>
+                                        The budget is{" "}
+                                        <b>
+                                            {decryptString(currencySymbol)}
+                                            {" "}
+                                            {decryptString(budget)}
+                                        </b>
+                                    </p>
+                                )}
+                                {date !== "" && (
+                                    <p>The gift exchange will be held on {" "}
+                                        <b>
+                                            {getFormattedDate()}
+                                        </b>
+                                    </p>
+                                )}
                                 {decriptWishlist(wishlist).length !== 0 && (
                                     <p>
                                         Open{" "}
@@ -89,6 +122,9 @@ const SecretSanta = (): JSX.Element => {
                                         </b>
                                         {`"s wishlist`}
                                     </p>
+                                )}
+                                {notes !== "" && (
+                                    <p>Additional notes: {" "} {decryptString(notes)}</p>
                                 )}
                                 <Messages ref={message} />
                                 <img src={reindeer} alt="sex" height={150} />

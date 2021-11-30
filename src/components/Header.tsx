@@ -7,8 +7,7 @@ import AccountModals from "../features/account/AccountModals";
 import { Button } from "primereact/button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { MenuItem } from "primereact/menuitem";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { setMembersList } from "../redux/membersSlice";
+import { useAppDispatch } from "../redux/hooks";
 import { setGroups } from "../features/group/groupSlice";
 import { setSignInStatus } from "../appSlice";
 import { useGetUserByIdQuery } from "../redux/api";
@@ -18,7 +17,6 @@ const Header = (): JSX.Element => {
     const menu = React.useRef<Menu>(null);
     const history = useHistory();
     const [showModal, setShowModal] = React.useState(false);
-    const isUserSignedIn = useAppSelector((state) => state.app.isUserSignedIn);
     const currentLocation = window.location.pathname;
     const isOnHomePage = currentLocation === "/";
     const dispatch = useAppDispatch();

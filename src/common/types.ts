@@ -4,6 +4,7 @@ export interface GroupMember {
     wishlist?: string;
     inviteLink?: string;
     notes?: string;
+    exclusions: string[];
 }
 
 export interface Group {
@@ -11,6 +12,9 @@ export interface Group {
     createdBy: string;
     name: string;
     members: GroupMember[];
+    currencySymbol?: string;
+    budget?: string;
+    date?: string;
 }
 
 export interface User {

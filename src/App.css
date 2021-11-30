@@ -5,7 +5,7 @@ body {
 }
 
 body {
-    background-color: #fff !important;
+    background-color: lightblue !important;
 }
 
 .members-list {
@@ -65,3 +65,19 @@ body {
     box-sizing: border-box;
     border: 0 solid #e5e7eb;
 }
+
+.p-inplace .p-inplace-content {
+    display: inline-flex;
+}
+
+.p-scrollpanel .p-scrollpanel-bar {
+    background-color: var(--primary-color);
+    opacity: 1;
+    transition: background-color .2s;
+}
+
+@media only screen and (max-width: 600px) {
+    .p-steps ul {
+       flex-flow: column !important;
+    }
+  }

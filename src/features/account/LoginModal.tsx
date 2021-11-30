@@ -29,7 +29,7 @@ const LoginModal = (props: Props): JSX.Element => {
             localStorage.setItem("token", data.data.token);
             localStorage.setItem("currentUser", data.data.currentUser);
             dispatch(setSignInStatus(true));
-            props.onHide();
+            onHide();
         }
     }, [dispatch, isError, data, onHide]);
 
