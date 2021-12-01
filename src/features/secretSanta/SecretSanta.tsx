@@ -85,7 +85,7 @@ const SecretSanta = (): JSX.Element => {
                                     <p>
                                         The budget is{" "}
                                         <b>
-                                            {decryptString(currencySymbol)}{" "}
+                                            {decryptString(currencySymbol)}
                                             {decryptString(budget)}
                                         </b>
                                     </p>
@@ -109,7 +109,7 @@ const SecretSanta = (): JSX.Element => {
                                         >
                                             {decryptString(assignee)}
                                         </b>
-                                        {`"s wishlist`}
+                                        {`'s wishlist`}
                                     </p>
                                 )}
                                 {notes !== "" && (
