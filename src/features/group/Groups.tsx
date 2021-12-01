@@ -6,16 +6,13 @@ import Header from "../../components/Header";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
-import {
-    useDeleteGroupByIdMutation,
-    useGetAllGroupsQuery
-} from "../../redux/api";
+import { useDeleteGroupByIdMutation, useGetAllGroupsQuery } from "../../redux/api";
 import { setGroups } from "./groupSlice";
 import Snowfall from "react-snowfall";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import "../home/scss/styles.scss";
 import groupImage from "../../images/undraw_Having_fun_re_vj4h.png";
-import { Skeleton } from 'primereact/skeleton';
+import { Skeleton } from "primereact/skeleton";
 import GroupCard from "./GroupCard";
 
 const Groups = (): JSX.Element => {
@@ -32,7 +29,7 @@ const Groups = (): JSX.Element => {
     );
 
     const [deleteGroup, { isSuccess, isError }] = useDeleteGroupByIdMutation();
-  
+
     React.useEffect(() => {
         if (data !== undefined) {
             dispatch(setGroups(data));
@@ -67,19 +64,20 @@ const Groups = (): JSX.Element => {
             <div className="row justify-content-center">
                 {groups.map((group, index) => {
                     return (
-
-                        <GroupCard 
+                        <GroupCard
                             key={index}
-                            group={group} 
-                            groupList={groups} 
-                            index={index} 
-                            displaySecretSantas={displaySecretSantas} 
+                            group={group}
+                            groupList={groups}
+                            index={index}
+                            displaySecretSantas={displaySecretSantas}
                             onDeleteGroup={(index) => {
                                 setShowConfirmDelete(true);
-                                setDeleteGroupIndex(index)
-                            }} 
-                            setDisplaySecretSantas={(groupIndex) => setDisplaySecretSantas(groupIndex)} 
-                            toast={toast} 
+                                setDeleteGroupIndex(index);
+                            }}
+                            setDisplaySecretSantas={(groupIndex) =>
+                                setDisplaySecretSantas(groupIndex)
+                            }
+                            toast={toast}
                         />
                     );
                 })}
@@ -106,7 +104,7 @@ const Groups = (): JSX.Element => {
                     </div>
                 )}
                 {!isUserSignedIn && (
-                    <div className="col-3 ms-auto me-auto">
+                    <div className="col-md-3 col-sm-10 ms-auto me-auto">
                         <Card header="You are not currently signed in">
                             <Button
                                 icon="pi pi-external-link"
