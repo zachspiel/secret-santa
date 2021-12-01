@@ -29,7 +29,7 @@ interface Authenticationresponse {
 export const api = createApi({
     reducerPath: "api",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:3001/api/",
+        baseUrl: "https://spiel-secret-santa-server.herokuapp.com/api/",
         prepareHeaders: (headers) => {
             const token = localStorage.getItem("token") || "";
 
