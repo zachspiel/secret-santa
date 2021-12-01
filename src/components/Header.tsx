@@ -78,13 +78,6 @@ const Header = (): JSX.Element => {
                         }`}
                         onClick={() => history.push("/groups")}
                     />
-                    <Button
-                        label="FAQ"
-                        className={`p-button p-button-danger h-50 mt-3 ${
-                            currentLocation === "/faq" ? "" : "p-button-outlined"
-                        }`}
-                        onClick={() => history.push("/faq")}
-                    />
                     <Menu model={getMenuItems()} popup ref={menu} id="popup-menu" />
                     <Avatar
                         icon="pi pi-user"

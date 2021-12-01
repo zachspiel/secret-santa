@@ -7,6 +7,7 @@ import { Messages } from "primereact/messages";
 import { useAppQuery } from "../../redux/hooks";
 import Header from "../../components/Header";
 import Snowfall from "react-snowfall";
+import { getFormattedDate } from "../../common/util";
 
 const SecretSanta = (): JSX.Element => {
     const [displayResult, setDisplayResult] = React.useState(false);
@@ -62,18 +63,6 @@ const SecretSanta = (): JSX.Element => {
         }, 1050);
     };
 
-    const getFormattedDate = (): string => {
-        if(date !== null) {
-            const dateObj = new Date(decryptString(date));
-            const month = dateObj.getUTCMonth() + 1;
-            const day = dateObj.getUTCDate();
-            const year = dateObj.getUTCFullYear();
-            return `${month}/${day}/${year}`
-        }
-
-        return "";
-    }
-    
     return (
         <div className="container-fluid text-center">
             <Header />
@@ -96,16 +85,16 @@ const SecretSanta = (): JSX.Element => {
                                     <p>
                                         The budget is{" "}
                                         <b>
-                                            {decryptString(currencySymbol)}
-                                            {" "}
+                                            {decryptString(currencySymbol)}{" "}
                                             {decryptString(budget)}
                                         </b>
                                     </p>
                                 )}
                                 {date !== "" && (
-                                    <p>The gift exchange will be held on {" "}
+                                    <p>
+                                        The gift exchange will be held on{" "}
                                         <b>
-                                            {getFormattedDate()}
+                                            {getFormattedDate(decryptString(date) ?? "")}
                                         </b>
                                     </p>
                                 )}
@@ -124,7 +113,7 @@ const SecretSanta = (): JSX.Element => {
                                     </p>
                                 )}
                                 {notes !== "" && (
-                                    <p>Additional notes: {" "} {decryptString(notes)}</p>
+                                    <p>Additional notes: {decryptString(notes)}</p>
                                 )}
                                 <Messages ref={message} />
                                 <img src={reindeer} alt="sex" height={150} />

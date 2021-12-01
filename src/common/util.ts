@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { GroupMember } from "./types";
 
 const getListOfNames = (members: GroupMember[]): string[] => {
     return members.reduce((acc: string[], member) => [...acc, member.name], []);
-}
+};
 
 const remove = (name: string, list: string[]) => list.filter((i) => i !== name);
 
@@ -79,18 +80,31 @@ const createUrl = (
     budget?: string,
     date?: string,
 ): string => {
-    const wishlistString = assignedMember.wishlist ? encryptString(assignedMember.wishlist) : "";
+    const wishlistString = assignedMember.wishlist
+        ? encryptString(assignedMember.wishlist)
+        : "";
     const budgetString = budget ? encryptString(budget) : "";
     const currencyString = currency ? encryptString(currency) : "";
     const noteString = assignedMember.notes ? encryptString(assignedMember.notes) : "";
     const dateString = date ? encryptString(date) : "";
 
-    return `https://spiel-secret-santa-server:3000/getSecretSanta/?name=${member.name}&selected=${encryptString(assignedMember.name,
+    return `https://spiel-secret-santa.herokuapp.com/getSecretSanta/?name=${
+        member.name
+    }&selected=${encryptString(
+        assignedMember.name,
     )}&wishlist=${wishlistString}&budget=${budgetString}&currency=${currencyString}&notes=${noteString}&date=${dateString}`;
 };
 
 const encryptString = (stringToEncrypt: string): string => {
     return btoa(stringToEncrypt);
+};
+
+const getFormattedDate = (date: string): string => {
+    const dateObj = new Date(date);
+    const month = dateObj.getUTCMonth() + 1;
+    const day = dateObj.getUTCDate();
+    const year = dateObj.getUTCFullYear();
+    return `${month}/${day}/${year}`;
 };
 
 const getAllAvailableCurrency = (): string[] => [
@@ -150,5 +164,6 @@ export {
     findIndexById,
     createUrl,
     generateDraw,
+    getFormattedDate,
     getAllAvailableCurrency,
 };

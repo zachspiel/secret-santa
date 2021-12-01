@@ -73,11 +73,15 @@ body {
 .p-scrollpanel .p-scrollpanel-bar {
     background-color: var(--primary-color);
     opacity: 1;
-    transition: background-color .2s;
+    transition: background-color 0.2s;
 }
 
 @media only screen and (max-width: 600px) {
     .p-steps ul {
-       flex-flow: column !important;
+        flex-flow: column !important;
     }
-  }
+}
+
+.p-scrollpanel-content {
+    padding: 0 !important;
+}

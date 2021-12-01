@@ -6,23 +6,31 @@ import { ScrollPanel } from "primereact/scrollpanel";
 import { Toast } from "primereact/toast";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { Group } from "../../common/types";
-import { getListOfNames, generateDraw } from "../../common/util";
+import { getListOfNames, generateDraw, getFormattedDate } from "../../common/util";
 import { useUpdateGroupByIdMutation } from "../../redux/api";
 
 interface Props {
-    group: Group,
-    groupList: Group[],
-    index: number,
-    displaySecretSantas: number[],
-    toast: React.RefObject<Toast>,
-    setDisplaySecretSantas: (index: number[]) => void,
-    onDeleteGroup: (index: number) => void,
+    group: Group;
+    groupList: Group[];
+    index: number;
+    displaySecretSantas: number[];
+    toast: React.RefObject<Toast>;
+    setDisplaySecretSantas: (index: number[]) => void;
+    onDeleteGroup: (index: number) => void;
 }
 
 const GroupCard = (props: Props): JSX.Element => {
-    const { group, groupList, index, displaySecretSantas, setDisplaySecretSantas, toast } = props;
+    const {
+        group,
+        groupList,
+        index,
+        displaySecretSantas,
+        setDisplaySecretSantas,
+        toast,
+    } = props;
 
-    const [updateGroup, { isSuccess: groupUpdatedSuccessfully }] = useUpdateGroupByIdMutation();
+    const [updateGroup, { isSuccess: groupUpdatedSuccessfully }] =
+        useUpdateGroupByIdMutation();
 
     React.useEffect(() => {
         if (groupUpdatedSuccessfully) {
@@ -41,8 +49,15 @@ const GroupCard = (props: Props): JSX.Element => {
         return (
             <div className={`d-flex justify-content-${hasBudget ? "between" : "end"}`}>
                 {hasBudget && (
+                    <p className="mt-2 ms-3">
+                        <i className="pi pi-money-bill" /> {group.currencySymbol ?? ""}{" "}
+                        {group.budget}
+                    </p>
+                )}
+                {group.date !== undefined && (
                     <p className="mt-2 ms-2">
-                        Budget: {group.currencySymbol ?? ""} {group.budget}
+                        <i className="pi pi-calendar" />
+                        {getFormattedDate(group.date)}
                     </p>
                 )}
                 <div className="d-flex">
@@ -55,21 +70,18 @@ const GroupCard = (props: Props): JSX.Element => {
                         checked={displaySecretSantas.includes(index)}
                         onChange={(e) =>
                             e.value
-                                ? setDisplaySecretSantas([
-                                    ...displaySecretSantas,
-                                    index,
-                                ])
+                                ? setDisplaySecretSantas([...displaySecretSantas, index])
                                 : setDisplaySecretSantas(
-                                    displaySecretSantas.filter(
-                                        (item) => item !== index,
-                                    ),
-                                )
+                                      displaySecretSantas.filter(
+                                          (item) => item !== index,
+                                      ),
+                                  )
                         }
                     />
                 </div>
             </div>
-        )
-    }
+        );
+    };
 
     const Footer = (index: number) => {
         return (
@@ -105,35 +117,49 @@ const GroupCard = (props: Props): JSX.Element => {
                 footer={Footer(index)}
             >
                 <div className="d-flex justify-content-between border-bottom pe-3 ps-3">
-                        <p>Name</p>
-                        <p>Assigned to</p>
-                        <p>Invite link</p>
-                    </div>
-                <ScrollPanel style={{ width: '100%', height: '280px' }} className="border mb-2 p-3">
-                    
+                    <p>Name</p>
+                    <p>Assigned to</p>
+                    <p>Invite link</p>
+                </div>
+                <ScrollPanel
+                    style={{ width: "100%", height: "280px" }}
+                    className="border mb-2 p-3"
+                >
                     {group.members.map((member, memberIndex) => {
                         return (
-                            <div className="d-flex justify-content-between border-bottom" key={memberIndex}>
-                                <p>{member.name}</p>
-                                {displaySecretSantas.includes(index) && <p>{member.assignedTo}</p>}
+                            <div
+                                className="d-flex justify-content-between border-bottom"
+                                key={memberIndex}
+                            >
+                                <div className="d-flex justify-content-between w-50">
+                                    <p>{member.name}</p>
+                                    {displaySecretSantas.includes(index) && (
+                                        <p>{member.assignedTo}</p>
+                                    )}
+                                </div>
                                 <CopyToClipboard
                                     text={member.inviteLink ?? ""}
-                                    onCopy={() => props.toast.current?.show({
-                                        severity: "success",
-                                        summary: "Success",
-                                        detail: "Invite sucessfully copied.",
-                                        life: 3000,
-                                    })}
+                                    onCopy={() =>
+                                        props.toast.current?.show({
+                                            severity: "success",
+                                            summary: "Success",
+                                            detail: "Invite sucessfully copied.",
+                                            life: 3000,
+                                        })
+                                    }
                                 >
-                                    <Button label="Copy invite" className="p-button-text" />
+                                    <Button
+                                        label="Copy invite"
+                                        className="p-button-text"
+                                    />
                                 </CopyToClipboard>
                             </div>
-                        )
+                        );
                     })}
                 </ScrollPanel>
             </Card>
         </div>
-    )
-}
+    );
+};
 
 export default GroupCard;

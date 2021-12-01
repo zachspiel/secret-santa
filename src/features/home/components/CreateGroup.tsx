@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
@@ -5,7 +6,7 @@ import { Group, GroupMember } from "../../../common/types";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { createUrl, findIndexById, getAllAvailableCurrency } from "../../../common/util";
 import { useInsertGroupMutation } from "../../../redux/api";
-import { Dropdown } from 'primereact/dropdown';
+import { Dropdown } from "primereact/dropdown";
 import { setMembersList } from "../../../redux/membersSlice";
 import { Calendar } from "primereact/calendar";
 import { useHistory } from "react-router";
@@ -16,8 +17,8 @@ interface Props {
 }
 
 interface CurrencyOptions {
-    name: string,
-    value: string
+    name: string;
+    value: string;
 }
 
 const CreateGroup = (props: Props): JSX.Element => {
@@ -45,9 +46,13 @@ const CreateGroup = (props: Props): JSX.Element => {
 
     React.useEffect(() => {
         if (isError) {
-            createToast("Group cannot be created. Please try again later.", "Error", "error");
+            createToast(
+                "Group cannot be created. Please try again later.",
+                "Error",
+                "error",
+            );
         }
-    }, [isError, createToast]);
+    }, [isError]);
 
     const getCurrencySymbols = (): CurrencyOptions[] => {
         const availableCurrency = getAllAvailableCurrency();
@@ -57,14 +62,13 @@ const CreateGroup = (props: Props): JSX.Element => {
             currencyOptions.push({ name: currency, value: currency });
         });
 
-        return currencyOptions
-    }
+        return currencyOptions;
+    };
 
     const onSaveGroup = () => {
         const _members: GroupMember[] = [];
 
         members.forEach((member, index) => {
-
             const assignedMemberIndex = findIndexById(members[index].assignedTo, members);
             const assignedMember = members[assignedMemberIndex];
 
@@ -73,7 +77,7 @@ const CreateGroup = (props: Props): JSX.Element => {
                 assignedMember,
                 selectedCurrency,
                 budget,
-                date
+                date,
             );
             _members.push({
                 ...member,
@@ -104,7 +108,10 @@ const CreateGroup = (props: Props): JSX.Element => {
 
     return (
         <div className="row mt-3 justify-content-center">
-            <div className="col-md-5 col-sm-6 text-start mb-3 p-5" style={{ zIndex: 1000 }}>
+            <div
+                className="col-md-5 col-sm-6 text-start mb-3 p-5"
+                style={{ zIndex: 1000 }}
+            >
                 <h6>Group name</h6>
                 <InputText
                     value={newGroupName}
@@ -147,14 +154,24 @@ const CreateGroup = (props: Props): JSX.Element => {
                     yearRange={`1990:${currentYear}`}
                     showIcon
                 />
-                <Button label="Save" onClick={() => isSignedIn ? onSaveGroup() : setShowSignIn(true)} disabled={newGroupName.length === 0} />
+                <Button
+                    label="Save"
+                    onClick={() => (isSignedIn ? onSaveGroup() : setShowSignIn(true))}
+                    disabled={newGroupName.length === 0}
+                />
 
                 {isSuccess && (
-                    <Button className="p-button-outlined ms-2" label="Go to new group" onClick={() => history.push("/groups")} />
+                    <Button
+                        className="p-button-outlined ms-2"
+                        label="Go to new group"
+                        onClick={() => history.push("/groups")}
+                    />
                 )}
 
-
-                <AccountModals isVisible={showSignIn} onHide={() => setShowSignIn(false)} />
+                <AccountModals
+                    isVisible={showSignIn}
+                    onHide={() => setShowSignIn(false)}
+                />
             </div>
         </div>
     );
