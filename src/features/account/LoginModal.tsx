@@ -2,7 +2,7 @@ import React from "react";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Dialog } from "primereact/dialog";
-import type { LoginPayload } from "../../common/types";
+import { LoginPayload } from "../../common/types";
 import { useLoginUserMutation } from "../../redux/api";
 import { useAppDispatch } from "../../redux/hooks";
 import { setSignInStatus } from "../../appSlice";
@@ -12,6 +12,8 @@ interface Props {
     renderRegisterModal: () => void;
     onHide: () => void;
 }
+
+type CurrentLoginPayload = keyof LoginPayload;
 
 const LoginModal = (props: Props): JSX.Element => {
     const [isEmailValid, setIsEmailValid] = React.useState(true);
@@ -42,7 +44,7 @@ const LoginModal = (props: Props): JSX.Element => {
         }
     };
 
-    const updateFormData = (name: keyof LoginPayload, value: string) => {
+    const updateFormData = (name: CurrentLoginPayload, value: string) => {
         const _formData = { ...formData };
         _formData[name] = value;
         setFormData(_formData);

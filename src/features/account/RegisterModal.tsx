@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Password } from "primereact/password";
 import { InputText } from "primereact/inputtext";
-import type { RegisterPayload } from "../../common/types";
+import { RegisterPayload } from "../../common/types";
 import { Dialog } from "primereact/dialog";
 import { Message } from "primereact/message";
 import { useRegisterUserMutation } from "../../redux/api";
@@ -13,6 +13,8 @@ interface Props {
     renderLoginModal: () => void;
     onHide: () => void;
 }
+
+type CurrentRegisterPayload = keyof RegisterPayload;
 
 const RegisterModal = (props: Props): JSX.Element => {
     const [isFirstNameValid, setIsFirstNameValid] = useState(true);
@@ -54,7 +56,7 @@ const RegisterModal = (props: Props): JSX.Element => {
         }
     }, [dispatch, isError, data, onHide]);
 
-    const updateFormData = (name: keyof RegisterPayload, value: string) => {
+    const updateFormData = (name: CurrentRegisterPayload, value: string) => {
         const _formData = { ...formData };
         _formData[name] = value;
         setFormData(_formData);
