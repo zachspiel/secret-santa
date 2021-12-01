@@ -85,7 +85,7 @@ const createUrl = (
     const noteString = assignedMember.notes ? encryptString(assignedMember.notes) : "";
     const dateString = date ? encryptString(date) : "";
 
-    return `${window.location.hostname}:3000/getSecretSanta/?name=${member.name}&selected=${encryptString(assignedMember.name,
+    return `https://spiel-secret-santa-server:3000/getSecretSanta/?name=${member.name}&selected=${encryptString(assignedMember.name,
     )}&wishlist=${wishlistString}&budget=${budgetString}&currency=${currencyString}&notes=${noteString}&date=${dateString}`;
 };
 
