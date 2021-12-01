@@ -19,7 +19,7 @@ body {
     animation: fly 5s;
     height: 200px;
     width: 300px;
-    margin-top: 5%;
+    margin-top: 4%;
 }
 
 #santa-hidden {
@@ -84,4 +84,5 @@ body {
 
 .p-scrollpanel-content {
     padding: 0 !important;
+    padding-right: 10px !important;
 }

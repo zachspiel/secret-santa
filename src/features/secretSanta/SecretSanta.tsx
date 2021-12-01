@@ -113,7 +113,10 @@ const SecretSanta = (): JSX.Element => {
                                     </p>
                                 )}
                                 {notes !== "" && (
-                                    <p>Additional notes: {decryptString(notes)}</p>
+                                    <p>
+                                        Additional notes:{" "}
+                                        {JSON.parse(decryptString(notes))}
+                                    </p>
                                 )}
                                 <Messages ref={message} />
                                 <img src={reindeer} alt="sex" height={150} />

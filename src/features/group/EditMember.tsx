@@ -1,5 +1,5 @@
 import React from "react";
-import { Dialog } from 'primereact/dialog';
+import { Dialog } from "primereact/dialog";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { InputTextarea } from "primereact/inputtextarea";
 import { InputText } from "primereact/inputtext";
@@ -35,28 +35,31 @@ const EditMember = (props: Props): JSX.Element => {
 
     React.useEffect(() => {
         if (showMessage) {
-            setTimeout(() => setShowMessage(false), 5000)
+            setTimeout(() => setShowMessage(false), 5000);
         }
     }, [showMessage]);
 
-    const getTextInput = (value: string, label: string, updateValue: (newValue: string) => void, placeholder?: string): JSX.Element => {
+    const getTextInput = (
+        value: string,
+        label: string,
+        updateValue: (newValue: string) => void,
+        placeholder?: string,
+    ): JSX.Element => {
         return (
             <div className="p-field mb-3">
-                <label className="d-block">
-                    {label}
-                </label>
+                <label className="d-block">{label}</label>
                 <InputText
                     placeholder={placeholder ?? ""}
                     value={value}
-                    className='w-100'
+                    className="w-100"
                     onChange={(e) => updateValue(e.target.value)}
                 />
             </div>
-        )
-    }
+        );
+    };
 
     if (editMemberIndex === -1) {
-        return <> </>
+        return <> </>;
     }
 
     const footer = () => {
@@ -65,46 +68,69 @@ const EditMember = (props: Props): JSX.Element => {
             name: name,
             wishlist: wishlist,
             notes: notes,
-        }
+        };
 
         return (
             <div className="d-flex justify-content-end">
-                <Button label="Cancel" className="p-button-outlined" onClick={() => { setShowMessage(false); closeModal(); }} />
-                <Button label="Save" onClick={() => { setShowMessage(true); props.onSave(updatedMember); }} />
+                <Button
+                    label="Cancel"
+                    className="p-button-outlined"
+                    onClick={() => {
+                        setShowMessage(false);
+                        closeModal();
+                    }}
+                />
+                <Button
+                    label="Save"
+                    onClick={() => {
+                        setShowMessage(true);
+                        props.onSave(updatedMember);
+                    }}
+                />
             </div>
-        )
-    }
+        );
+    };
 
     const closeModal = () => {
+        setShowMessage(false);
         dispatch(setEditMemberIndex(-1));
         setIsVisible(false);
-    }
+    };
 
     return (
-        <Dialog header="Edit Member" footer={footer} visible={isVisible} style={{ width: '50vw' }} onHide={closeModal}>
-
+        <Dialog
+            header="Edit Member"
+            footer={footer}
+            visible={isVisible}
+            style={{ width: "50vw" }}
+            onHide={closeModal}
+        >
             {showMessage && (
-                <Message severity="success" className="w-100" text="Member updated successfully" />)}
+                <Message
+                    severity="success"
+                    className="w-100"
+                    text="Member updated successfully"
+                />
+            )}
 
             {getTextInput(name, "Name", setName, "Add person")}
-            {getTextInput(wishlist,
+            {getTextInput(
+                wishlist,
                 "Wishlist (optional)",
                 setWishlist,
-                "Add link to wish list")}
+                "Add link to wish list",
+            )}
 
             <div className="p-field mb-3">
-                <label className="d-block">
-                    Additional notes (optional)
-                </label>
+                <label className="d-block">Additional notes (optional)</label>
                 <InputTextarea
                     value={notes}
-                    className='w-100'
+                    className="w-100"
                     onChange={(e) => setNotes(e.target.value)}
                 />
             </div>
-
         </Dialog>
     );
-}
+};
 
 export default EditMember;

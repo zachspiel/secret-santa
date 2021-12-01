@@ -85,7 +85,9 @@ const createUrl = (
         : "";
     const budgetString = budget ? encryptString(budget) : "";
     const currencyString = currency ? encryptString(currency) : "";
-    const noteString = assignedMember.notes ? encryptString(assignedMember.notes) : "";
+    const noteString = assignedMember.notes
+        ? encryptString(JSON.stringify(assignedMember.notes))
+        : "";
     const dateString = date ? encryptString(date) : "";
 
     return `https://spiel-secret-santa.herokuapp.com/getSecretSanta/?name=${
