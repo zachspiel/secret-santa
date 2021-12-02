@@ -82,7 +82,7 @@ const createUrl = (
 ): string => {
     const url: URL = new URL("https://spiel-secret-santa.herokuapp.com/getSecretSanta/");
     url.searchParams.append("name", member.name);
-    url.searchParams.append("selected", member.assignedTo);
+    url.searchParams.append("selected", encryptString(member.assignedTo));
     url.searchParams.append("currency", encryptString(currency ?? ""));
     url.searchParams.append("budget", encryptString(budget ?? ""));
     url.searchParams.append("date", encryptString(date ?? ""));
