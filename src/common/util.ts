@@ -89,7 +89,7 @@ const createUrl = (
     for (const [key, value] of Object.entries(assignedMember)) {
         if (key === "name" || key === "wishlist") {
             url.searchParams.append("selected", encryptString(value));
-        } else if (key !== "exclusions") {
+        } else if (key !== "exclusions" && key !== "assignedTo") {
             url.searchParams.append(key, encodeString(value));
         }
     }
