@@ -15,21 +15,24 @@ const SecretSanta = (): JSX.Element => {
     const [hasClicked, setHasClicked] = React.useState(false);
     const message = React.useRef<Messages>(null);
 
-    const query = useAppQuery();
-    const secretSanta = query.get("name");
-    const assignee = query.get("selected");
-    const wishlist = query.get("wishlist");
-    const budget = query.get("budget");
-    const currencySymbol = query.get("currency");
-    const notes = query.get("notes");
-    const date = query.get("date");
-
     const decryptString = (stringToDecript: string | null): string => {
         if (stringToDecript === null) {
             return "Sorry, that user was not found.";
         }
         return atob(stringToDecript);
     };
+
+    const query = useAppQuery();
+    const secretSanta = query.get("name");
+    const assignee = decryptString(query.get("selected"));
+    const wishlist = query.get("wishlist");
+    const budget = decryptString(query.get("budget"));
+    const currencySymbol = decryptString(query.get("currency"));
+    const notes = decodeURIComponent(query.get("notes") ?? "");
+    const favoriteStore = decodeURIComponent(query.get("favoriteStore") ?? "");
+    const favoriteFood = decodeURIComponent(query.get("favoriteFood") ?? "");
+    const favoriteColor = decodeURIComponent(query.get("favoriteColor") ?? "");
+    const date = decryptString(query.get("date"));
 
     const decriptWishlist = (wishlist: string | null): string => {
         if (wishlist === null || wishlist.length === 0) {
@@ -45,7 +48,7 @@ const SecretSanta = (): JSX.Element => {
             {
                 severity: "success",
                 summary: "",
-                detail: `Santa is now getting ${decryptString(assignee)}"s wish list`,
+                detail: `Santa is now getting ${assignee}"s wish list`,
                 sticky: true,
             },
         ]);
@@ -63,68 +66,124 @@ const SecretSanta = (): JSX.Element => {
         }, 1050);
     };
 
+    const createDetailField = (
+        label: string,
+        content: string,
+        icon: string,
+        extraContent?: string,
+    ): JSX.Element => {
+        return (
+            <div className="d-flex mt-2">
+                <i className={`pi ${icon} me-2 mt-1`} />
+                <p>
+                    {label} <b>{content}</b>
+                    {extraContent}
+                </p>
+            </div>
+        );
+    };
+
     return (
         <div className="container-fluid text-center">
             <Header />
             <div className="row justify-content-center">
                 <div className="col-md-3 col-sm-6 mt-3">
-                    <div className="card p-3 border-0" style={{ zIndex: 1000 }}>
+                    <div
+                        className="card p-3 border-0 text-start"
+                        style={{ zIndex: 1000 }}
+                    >
                         {displayResult && (
                             <div>
-                                <p>
-                                    Ho Ho Ho <b>{secretSanta}</b>!
-                                </p>
-                                <p>
-                                    You are{" "}
-                                    <b className="text-primary">
-                                        {decryptString(assignee)}
-                                    </b>
-                                    {`'s Secret Santa!`}
-                                </p>
-                                {budget !== "" && (
+                                <div className="text-center border-bottom">
                                     <p>
-                                        The budget is{" "}
-                                        <b>
-                                            {decryptString(currencySymbol)}
-                                            {decryptString(budget)}
-                                        </b>
+                                        Ho Ho Ho <b>{secretSanta}</b>!
                                     </p>
-                                )}
-                                {date !== "" && (
                                     <p>
-                                        The gift exchange will be held on{" "}
-                                        <b>
-                                            {getFormattedDate(decryptString(date) ?? "")}
-                                        </b>
+                                        You are <b>{assignee}</b>
+                                        {`'s Secret Santa!`}
                                     </p>
-                                )}
+                                </div>
+                                <p className="mt-2">
+                                    Details for <b>{assignee}</b>:
+                                </p>
+                                {budget !== "" &&
+                                    createDetailField(
+                                        "The budget is",
+                                        currencySymbol + budget,
+                                        "pi-money-bill",
+                                    )}
+
+                                {date !== "" &&
+                                    createDetailField(
+                                        " The gift exchange will be held on",
+                                        getFormattedDate(date),
+                                        "pi-calendar",
+                                    )}
                                 {decriptWishlist(wishlist).length !== 0 && (
-                                    <p>
-                                        Open{" "}
-                                        <b
-                                            className="text-primary"
-                                            onClick={() =>
-                                                openWishList(decriptWishlist(wishlist))
-                                            }
-                                        >
-                                            {decryptString(assignee)}
-                                        </b>
-                                        {`'s wishlist`}
-                                    </p>
+                                    <div className="d-flex mt-2">
+                                        <i className="pi pi-external-link me-2 mt-1" />
+                                        <p>
+                                            Open{" "}
+                                            <b
+                                                className="text-primary"
+                                                onClick={() =>
+                                                    openWishList(
+                                                        decriptWishlist(wishlist),
+                                                    )
+                                                }
+                                            >
+                                                {assignee}
+                                            </b>
+                                            {`'s wishlist`}
+                                        </p>
+                                    </div>
                                 )}
+                                {favoriteStore !== "" &&
+                                    createDetailField(
+                                        "Favorite Store:",
+                                        favoriteStore,
+                                        "pi-shopping-cart",
+                                    )}
+                                {favoriteFood !== "" &&
+                                    createDetailField(
+                                        "Favorite Food:",
+                                        favoriteFood,
+                                        "pi-chart-pie",
+                                    )}
+                                {favoriteColor !== "" && (
+                                    <div className="d-flex">
+                                        <i className={`pi pi-palette me-2 mt-1`} />
+                                        <p>Favorite Color:</p>
+                                        <div
+                                            className="p-colorpicker-preview ms-2"
+                                            style={{
+                                                backgroundColor:
+                                                    "#" + decodeURI(favoriteColor ?? ""),
+                                                width: "1.5rem",
+                                                height: "1.5rem",
+                                            }}
+                                        />
+                                    </div>
+                                )}
+
                                 {notes !== "" && (
-                                    <p>
-                                        Additional notes:{" "}
-                                        {JSON.parse(decryptString(notes))}
-                                    </p>
+                                    <div className="d-flex mt-1">
+                                        <i className={`pi pi-book me-2 mt-1`} />
+                                        <p>Additional Notes: {notes}</p>
+                                    </div>
                                 )}
                                 <Messages ref={message} />
-                                <img src={reindeer} alt="sex" height={150} />
+                                <img
+                                    src={reindeer}
+                                    className="d-flex ms-auto me-auto"
+                                    alt="sex"
+                                    height={150}
+                                />
                             </div>
                         )}
                         {!displayResult && hasClicked && (
                             <>
-                                <h5>Now opening...</h5>
+                                <h5 className="text-center">Now opening...</h5>
                                 <img
                                     src={confettiAnimation}
                                     alt="present opening"
@@ -134,7 +193,10 @@ const SecretSanta = (): JSX.Element => {
                         )}
 
                         {!displayResult && !hasClicked && (
-                            <div onClick={() => playPresentAnimation()}>
+                            <div
+                                onClick={() => playPresentAnimation()}
+                                className="text-center"
+                            >
                                 <h5>Click to view your assigned person!</h5>
                                 <img
                                     src={present}

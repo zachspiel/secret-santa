@@ -7,6 +7,7 @@ import { Button } from "primereact/button";
 import { GroupMember } from "../../common/types";
 import { setEditMemberIndex } from "../../redux/membersSlice";
 import { Message } from "primereact/message";
+import { ColorPicker } from "primereact/colorpicker";
 
 interface Props {
     onSave: (groupMember: GroupMember) => void;
@@ -18,6 +19,9 @@ const EditMember = (props: Props): JSX.Element => {
     const [isVisible, setIsVisible] = React.useState(false);
     const [name, setName] = React.useState("");
     const [wishlist, setWishlist] = React.useState("");
+    const [favoriteStore, setFavoriteStore] = React.useState("");
+    const [favoriteFood, setFavoriteFood] = React.useState("");
+    const [favoriteColor, setFavoriteColor] = React.useState("");
     const [showMessage, setShowMessage] = React.useState(false);
     const [notes, setNotes] = React.useState("");
     const dispatch = useAppDispatch();
@@ -26,6 +30,9 @@ const EditMember = (props: Props): JSX.Element => {
         if (editMemberIndex !== -1) {
             setName(memberList[editMemberIndex].name);
             setWishlist(memberList[editMemberIndex]?.wishlist ?? "");
+            setFavoriteStore(memberList[editMemberIndex]?.favoriteStore ?? "");
+            setFavoriteFood(memberList[editMemberIndex]?.favoriteFood ?? "");
+            setFavoriteColor(memberList[editMemberIndex]?.favoriteColor ?? "");
             setNotes(memberList[editMemberIndex]?.notes ?? "");
             setIsVisible(true);
         } else {
@@ -68,6 +75,9 @@ const EditMember = (props: Props): JSX.Element => {
             name: name,
             wishlist: wishlist,
             notes: notes,
+            favoriteStore: favoriteStore,
+            favoriteFood: favoriteFood,
+            favoriteColor: favoriteColor,
         };
 
         return (
@@ -116,13 +126,36 @@ const EditMember = (props: Props): JSX.Element => {
             {getTextInput(name, "Name", setName, "Add person")}
             {getTextInput(
                 wishlist,
-                "Wishlist (optional)",
+                "Wishlist - optional",
                 setWishlist,
                 "Add link to wish list",
             )}
 
+            {getTextInput(
+                favoriteStore,
+                "Favorite store(s) - optional",
+                setFavoriteStore,
+                "Enter favorite store",
+            )}
+
+            {getTextInput(
+                favoriteFood,
+                "Favorite food - optional",
+                setFavoriteFood,
+                "Enter favorite food",
+            )}
+
             <div className="p-field mb-3">
-                <label className="d-block">Additional notes (optional)</label>
+                <label className="d-block">Favorite Color - optional</label>
+                <ColorPicker
+                    value={favoriteColor}
+                    className="w-100"
+                    onChange={(e) => setFavoriteColor(e.value)}
+                ></ColorPicker>
+            </div>
+
+            <div className="p-field mb-3">
+                <label className="d-block">Additional notes - optional</label>
                 <InputTextarea
                     value={notes}
                     className="w-100"

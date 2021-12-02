@@ -4,6 +4,9 @@ export interface GroupMember {
     wishlist?: string;
     inviteLink?: string;
     notes?: string;
+    favoriteStore?: string;
+    favoriteFood?: string;
+    favoriteColor?: string;
     exclusions: string[];
 }
 

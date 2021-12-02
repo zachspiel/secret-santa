@@ -5,6 +5,7 @@ import { setMembersList } from "../../../redux/membersSlice";
 import type { GroupMember } from "../../../common/types";
 import { Button } from "primereact/button";
 import { InputTextarea } from "primereact/inputtextarea";
+import { ColorPicker } from "primereact/colorpicker";
 import { setCurrentStep } from "../../../appSlice";
 import EditMember from "../../group/EditMember";
 import MembersList from "./MembersList";
@@ -20,6 +21,9 @@ const AddMember = (props: Props): JSX.Element => {
     const [newMember, setNewMember] = React.useState("");
     const [newMemberWishList, setNewMemberWishList] = React.useState("");
     const [notes, setNotes] = React.useState("");
+    const [favoriteStore, setFavoriteStore] = React.useState("");
+    const [favoriteFood, setFavoriteFood] = React.useState("");
+    const [favoriteColor, setFavoriteColor] = React.useState("");
     const [error, setError] = React.useState("");
 
     const insertMember = () => {
@@ -38,8 +42,11 @@ const AddMember = (props: Props): JSX.Element => {
                     name: reducedMemberName,
                     wishlist: newMemberWishList,
                     notes: notes,
+                    favoriteStore: favoriteStore,
+                    favoriteFood: favoriteFood,
+                    favoriteColor: favoriteColor,
                     assignedTo: "",
-                    exclusions: []
+                    exclusions: [],
                 },
             ];
 
@@ -52,6 +59,9 @@ const AddMember = (props: Props): JSX.Element => {
         setNewMember("");
         setNewMemberWishList("");
         setNotes("");
+        setFavoriteStore("");
+        setFavoriteFood("");
+        setFavoriteColor("");
         setError("");
     };
 
@@ -59,8 +69,7 @@ const AddMember = (props: Props): JSX.Element => {
         const _members = [...members];
         _members[editMemberIndex] = { ...updatedMember };
         dispatch(setMembersList(_members));
-
-    }
+    };
 
     return (
         <div className="row justify-content-center mt-4">
@@ -70,9 +79,7 @@ const AddMember = (props: Props): JSX.Element => {
                         <h5>Add Member</h5>
                     </div>
                     <div className="p-field mb-3">
-                        <label className="d-block">
-                            Name
-                        </label>
+                        <label className="d-block">Name</label>
                         <InputText
                             placeholder={"Add member"}
                             value={newMember}
@@ -91,10 +98,44 @@ const AddMember = (props: Props): JSX.Element => {
                             onChange={(e) => setNewMemberWishList(e.target.value)}
                         />
                     </div>
+                    <div className="p-field mb-3">
+                        <label className="d-block">
+                            Favorite store(s){" "}
+                            <span className="text-muted">- optional</span>
+                        </label>
+                        <InputText
+                            placeholder={"Enter favorite store"}
+                            value={favoriteStore}
+                            className={`${error.length > 0 ? "p-invalid" : ""} w-100`}
+                            onChange={(e) => setFavoriteStore(e.target.value)}
+                        />
+                    </div>
+                    <div className="p-field mb-3">
+                        <label className="d-block">
+                            Favorite food <span className="text-muted">- optional</span>
+                        </label>
+                        <InputText
+                            placeholder={"Enter favorite food"}
+                            value={favoriteFood}
+                            className={`${error.length > 0 ? "p-invalid" : ""} w-100`}
+                            onChange={(e) => setFavoriteFood(e.target.value)}
+                        />
+                    </div>
+                    <div className="p-field mb-3">
+                        <label className="d-block">
+                            Favorite Color <span className="text-muted">- optional</span>
+                        </label>
+                        <ColorPicker
+                            value={favoriteColor}
+                            className="w-100"
+                            onChange={(e) => setFavoriteColor(e.value)}
+                        ></ColorPicker>
+                    </div>
 
                     <div className="p-field mb-3">
                         <label className="d-block">
-                            Additional notes (optional)
+                            Additional notes{" "}
+                            <span className="text-muted">- optional</span>
                         </label>
                         <InputTextarea
                             value={notes}
@@ -102,8 +143,6 @@ const AddMember = (props: Props): JSX.Element => {
                             onChange={(e) => setNotes(e.target.value)}
                         />
                     </div>
-
-
                     {error.length > 0 && (
                         <small className="p-error d-block">{error}</small>
                     )}
@@ -132,7 +171,6 @@ const AddMember = (props: Props): JSX.Element => {
             )}
 
             <EditMember onSave={saveUpdatedMember} />
-
         </div>
     );
 };

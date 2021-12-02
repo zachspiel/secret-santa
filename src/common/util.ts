@@ -80,25 +80,29 @@ const createUrl = (
     budget?: string,
     date?: string,
 ): string => {
-    const wishlistString = assignedMember.wishlist
-        ? encryptString(assignedMember.wishlist)
-        : "";
-    const budgetString = budget ? encryptString(budget) : "";
-    const currencyString = currency ? encryptString(currency) : "";
-    const noteString = assignedMember.notes
-        ? encryptString(JSON.stringify(assignedMember.notes))
-        : "";
-    const dateString = date ? encryptString(date) : "";
+    const url: URL = new URL("https://spiel-secret-santa.herokuapp.com/getSecretSanta/");
+    url.searchParams.append("name", member.name);
+    url.searchParams.append("currency", encryptString(currency ?? ""));
+    url.searchParams.append("budget", encryptString(budget ?? ""));
+    url.searchParams.append("date", encryptString(date ?? ""));
 
-    return `https://spiel-secret-santa.herokuapp.com/getSecretSanta/?name=${
-        member.name
-    }&selected=${encryptString(
-        assignedMember.name,
-    )}&wishlist=${wishlistString}&budget=${budgetString}&currency=${currencyString}&notes=${noteString}&date=${dateString}`;
+    for (const [key, value] of Object.entries(assignedMember)) {
+        if (key === "name" || key === "wishlist") {
+            url.searchParams.append("selected", encryptString(value));
+        } else if (key !== "exclusions") {
+            url.searchParams.append(key, encodeString(value));
+        }
+    }
+
+    return url.toString();
 };
 
 const encryptString = (stringToEncrypt: string): string => {
     return btoa(stringToEncrypt);
+};
+
+const encodeString = (stringToEncode: string | undefined): string => {
+    return encodeURIComponent(stringToEncode ?? "");
 };
 
 const getFormattedDate = (date: string): string => {
