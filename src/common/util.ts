@@ -82,14 +82,20 @@ const createUrl = (
 ): string => {
     const url: URL = new URL("https://spiel-secret-santa.herokuapp.com/getSecretSanta/");
     url.searchParams.append("name", member.name);
+    url.searchParams.append("selected", member.assignedTo);
     url.searchParams.append("currency", encryptString(currency ?? ""));
     url.searchParams.append("budget", encryptString(budget ?? ""));
     url.searchParams.append("date", encryptString(date ?? ""));
 
     for (const [key, value] of Object.entries(assignedMember)) {
-        if (key === "name" || key === "wishlist") {
-            url.searchParams.append("selected", encryptString(value));
-        } else if (key !== "exclusions" && key !== "assignedTo") {
+        if (key === "wishlist") {
+            url.searchParams.append("wishlist", encryptString(value));
+        } else if (
+            key !== "exclusions" &&
+            key !== "assignedTo" &&
+            key !== "_id" &&
+            key !== "name"
+        ) {
             url.searchParams.append(key, encodeString(value));
         }
     }
