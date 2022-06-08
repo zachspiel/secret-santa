@@ -1,7 +1,7 @@
 # Secret Santa App
 
 Secret Santa Generator is a free online Secret Santa gift exchange generator to easily create a Secret Santa list to share
-with friends, family or even co-workers and add your wishlist.
+with friends and family.
 
 ## Available Scripts
 
