@@ -9,7 +9,7 @@ import { useInsertGroupMutation } from "../../../redux/api";
 import { Dropdown } from "primereact/dropdown";
 import { setMembersList } from "../../../redux/membersSlice";
 import { Calendar } from "primereact/calendar";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import AccountModals from "../../account/AccountModals";
 
 interface Props {
@@ -31,7 +31,7 @@ const CreateGroup = (props: Props): JSX.Element => {
     const [budget, setBudget] = React.useState("");
     const currentYear = new Date().getFullYear();
     const [saveGroup, { isSuccess, isError }] = useInsertGroupMutation();
-    const history = useHistory();
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { createToast } = props;
 
@@ -164,7 +164,7 @@ const CreateGroup = (props: Props): JSX.Element => {
                     <Button
                         className="p-button-outlined ms-2"
                         label="Go to new group"
-                        onClick={() => history.push("/groups")}
+                        onClick={() => navigate("/groups")}
                     />
                 )}
 

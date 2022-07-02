@@ -128,7 +128,7 @@ const AddMember = (props: Props): JSX.Element => {
                         <ColorPicker
                             value={favoriteColor}
                             className="w-100"
-                            onChange={(e) => setFavoriteColor(e.value)}
+                            onChange={(e) => setFavoriteColor((e.value as string) ?? "")}
                         ></ColorPicker>
                     </div>
 

@@ -176,7 +176,7 @@ const SecretSanta = (): JSX.Element => {
                                 <img
                                     src={reindeer}
                                     className="d-flex ms-auto me-auto"
-                                    alt="sex"
+                                    alt="Reindeer gif"
                                     height={150}
                                 />
                             </div>

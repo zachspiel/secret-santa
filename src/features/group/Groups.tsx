@@ -1,7 +1,7 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { Card } from "primereact/card";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
@@ -22,7 +22,7 @@ const Groups = (): JSX.Element => {
     const [showConfirmDelete, setShowConfirmDelete] = React.useState(false);
     const [displaySecretSantas, setDisplaySecretSantas] = React.useState<number[]>([]);
     const toast = React.useRef<Toast>(null);
-    const history = useHistory();
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { data, isLoading } = useGetAllGroupsQuery(
         localStorage.getItem("currentUser") ?? skipToken,
@@ -98,7 +98,7 @@ const Groups = (): JSX.Element => {
                             <Button
                                 label="Add a group"
                                 className="p-button p-button-outline me-2"
-                                onClick={() => history.push("/")}
+                                onClick={() => navigate("/")}
                             />
                         </Card>
                     </div>
@@ -110,7 +110,7 @@ const Groups = (): JSX.Element => {
                                 icon="pi pi-external-link"
                                 label="Click here to add a group"
                                 className="p-button p-button-outline me-2"
-                                onClick={() => history.push("/")}
+                                onClick={() => navigate("/")}
                             />
                         </Card>
                     </div>

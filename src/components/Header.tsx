@@ -1,7 +1,7 @@
 import React from "react";
 import { Avatar } from "primereact/avatar";
 import santaImage from "../images/santa.svg";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Menu } from "primereact/menu";
 import AccountModals from "../features/account/AccountModals";
 import { Button } from "primereact/button";
@@ -15,7 +15,7 @@ import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 const Header = (): JSX.Element => {
     const menu = React.useRef<Menu>(null);
-    const history = useHistory();
+    const navigate = useNavigate();
     const [showModal, setShowModal] = React.useState(false);
     const currentLocation = window.location.pathname;
     const isOnHomePage = currentLocation === "/";
@@ -30,12 +30,12 @@ const Header = (): JSX.Element => {
             {
                 label: "Manage Groups",
                 icon: "pi pi-users",
-                command: () => history.push("/groups"),
+                command: () => navigate("/groups"),
             },
             {
                 label: "Create Group",
                 icon: "pi pi-plus",
-                command: () => history.push("/"),
+                command: () => navigate("/"),
             },
         ];
 
@@ -46,7 +46,7 @@ const Header = (): JSX.Element => {
                 dispatch(setGroups([]));
                 dispatch(setSignInStatus(false));
                 localStorage.clear();
-                history.push("/");
+                navigate("/");
             },
         });
 
@@ -54,7 +54,7 @@ const Header = (): JSX.Element => {
             items.unshift({
                 label: `${data.firstName} ${data.lastName}`,
                 icon: "pi pi-user",
-                command: () => history.push("/"),
+                command: () => navigate("/"),
             });
         }
         return items;
@@ -69,14 +69,14 @@ const Header = (): JSX.Element => {
                         className={`p-button p-button-danger me-2 h-50 mt-3 ${
                             isOnHomePage ? "" : "p-button-outlined"
                         }`}
-                        onClick={() => history.push("/")}
+                        onClick={() => navigate("/")}
                     />
                     <Button
                         label="Groups"
                         className={`p-button p-button-danger me-2 h-50  mt-3 ${
                             currentLocation === "/groups" ? "" : "p-button-outlined"
                         }`}
-                        onClick={() => history.push("/groups")}
+                        onClick={() => navigate("/groups")}
                     />
                     <Menu model={getMenuItems()} popup ref={menu} id="popup-menu" />
                     <Avatar

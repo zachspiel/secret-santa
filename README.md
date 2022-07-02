@@ -3,16 +3,16 @@
 Secret Santa Generator is a free online Secret Santa gift exchange generator to easily create a Secret Santa list to share
 with friends and family.
 
-## Available Scripts
+[https://spiel-secret-santa.herokuapp.com/](https://spiel-secret-santa.herokuapp.com/)
 
-In the project directory, you can run:
+## Installation
 
-### `yarn devstart`
+```bash
+  yarn install
+```
 
-Runs Secret Santa Generator development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Usage
 
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+  yarn devstart
+```
