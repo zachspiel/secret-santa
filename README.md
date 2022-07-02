@@ -1,4 +1,4 @@
-# Secret Santa App
+# Secret Santa Generator
 
 Secret Santa Generator is a free online Secret Santa gift exchange generator to easily create a Secret Santa list to share
 with friends and family.
@@ -16,3 +16,12 @@ with friends and family.
 ```bash
   yarn devstart
 ```
+
+## 🧰 Tech Stack
+
+-   React
+-   TypeScript
+-   Redux
+-   Express
+-   Node
+-   MongoDB
