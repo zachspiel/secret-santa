@@ -1,6 +1,6 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import Header from "../../components/Header";
+import Header from "../common/Header";
 import AddMember from "./components/AddMember";
 import CreateGroup from "./components/CreateGroup";
 import { Steps } from "primereact/steps";
@@ -32,11 +32,7 @@ const AddGroupMembers = (): JSX.Element => {
 
     const onPageChange = (newStep: number) => {
         if (newStep - currentStep > 1) {
-            displayToastMessage(
-                "Please go to the next step.",
-                "Error",
-                "error",
-            );
+            displayToastMessage("Please go to the next step.", "Error", "error");
         } else if ((newStep > 0 && members.length >= 3) || newStep === 0) {
             dispatch(setCurrentStep(newStep));
         } else if (newStep > 0 && members.length < 3) {
@@ -51,7 +47,14 @@ const AddGroupMembers = (): JSX.Element => {
     return (
         <div className="container-fluid text-center">
             <Header />
-            <div className="col-md-8 col-sm-12 mb-5 main-content" style={{ backgroundColor: "white", marginLeft: "auto", marginRight: "auto" }}>
+            <div
+                className="col-md-8 col-sm-12 mb-5 main-content"
+                style={{
+                    backgroundColor: "white",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                }}
+            >
                 <div className="d-flex justify-content-center">
                     <div className="w-75 mt-3">
                         <Steps
@@ -62,7 +65,7 @@ const AddGroupMembers = (): JSX.Element => {
                         />
                     </div>
                 </div>
-                {currentStep === 0 && <AddMember members={members} />}
+                {currentStep === 0 && <AddMember />}
 
                 {currentStep === 1 && <Exclusions />}
 

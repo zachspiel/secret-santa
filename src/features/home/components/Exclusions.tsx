@@ -1,7 +1,6 @@
 import React from "react";
 import { MultiSelect } from "primereact/multiselect";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { MenuItem } from "primereact/menuitem";
 import { InputSwitch } from "primereact/inputswitch";
 import { setMembersList, toggleEnableExclusions } from "../../../redux/membersSlice";
 import { GroupMember } from "../../../common/types";
@@ -17,12 +16,10 @@ const Exclusions = (): JSX.Element => {
     const dispatch = useAppDispatch();
     const panelClass =
         members.length >= 6 && enableExclusions ? "border ms-auto me-auto mb-2 p-3" : "";
-    const getOptions = (filteredMembers: GroupMember[]): MenuItem[] => {
-        const items: MenuItem[] = [];
-
-        filteredMembers.forEach((member) =>
-            items.push({ name: member.name, value: member.name }),
-        );
+    const getOptions = (filteredMembers: GroupMember[]) => {
+        const items = filteredMembers.map((member: GroupMember) => {
+            return { label: member.name, value: member.name };
+        });
 
         return items;
     };
@@ -81,7 +78,6 @@ const Exclusions = (): JSX.Element => {
 
                                         dispatch(setMembersList(_members));
                                     }}
-                                    optionLabel="name"
                                     placeholder="Select a name"
                                     selectionLimit={availableOptions.length - 2}
                                 />

@@ -8,8 +8,10 @@ interface MembersSlice {
     enableExclusions: boolean;
 }
 
+const localMembers = localStorage.getItem("currentMembers");
+
 const initialState: MembersSlice = {
-    membersList: [],
+    membersList: localMembers !== null ? JSON.parse(localMembers) : [],
     editMemberIndex: -1,
     enableExclusions: false,
 };
@@ -37,7 +39,7 @@ export const membersSlice = createSlice({
         },
         toggleEnableExclusions: (state, action: PayloadAction<boolean>) => {
             state.enableExclusions = action.payload;
-        }
+        },
     },
 });
 

@@ -9,8 +9,10 @@ import { useInsertGroupMutation } from "../../../redux/api";
 import { Dropdown } from "primereact/dropdown";
 import { setMembersList } from "../../../redux/membersSlice";
 import { Calendar } from "primereact/calendar";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import AccountModals from "../../account/AccountModals";
+import { Formik } from "formik";
+import { object, string } from "yup";
 
 interface Props {
     createToast: (message: string, summary: string, severity: string) => void;
@@ -21,26 +23,41 @@ interface CurrencyOptions {
     value: string;
 }
 
+interface GroupPayload {
+    groupName: string;
+    date: string;
+    currency: string;
+    budget: string;
+}
+
 const CreateGroup = (props: Props): JSX.Element => {
     const members = useAppSelector((state) => state.members.membersList);
     const isSignedIn = useAppSelector((state) => state.app.isUserSignedIn);
     const [showSignIn, setShowSignIn] = React.useState(false);
-    const [newGroupName, setNewGroupName] = React.useState("");
-    const [date, setDate] = React.useState("");
-    const [selectedCurrency, setSelectedCurrency] = React.useState("US$");
-    const [budget, setBudget] = React.useState("");
     const currentYear = new Date().getFullYear();
     const [saveGroup, { isSuccess, isError }] = useInsertGroupMutation();
-    const history = useHistory();
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { createToast } = props;
+
+    const initialValues: GroupPayload = {
+        groupName: "",
+        date: "",
+        currency: "US$",
+        budget: "",
+    };
+
+    const groupValidationSchema = object().shape({
+        groupName: string().trim().required("Group is required."),
+        date: string().trim().optional(),
+        currency: string().trim().optional(),
+        budget: string().trim().optional(),
+    });
 
     React.useEffect(() => {
         if (isSuccess) {
             createToast("Group successfully created.", "Success", "success");
             dispatch(setMembersList([]));
-            setNewGroupName("");
-            setDate("");
         }
     }, [dispatch, isSuccess]);
 
@@ -65,45 +82,33 @@ const CreateGroup = (props: Props): JSX.Element => {
         return currencyOptions;
     };
 
-    const onSaveGroup = () => {
-        const _members: GroupMember[] = [];
-
-        members.forEach((member, index) => {
+    const onSaveGroup = (values: GroupPayload) => {
+        console.log("gere");
+        const _members: GroupMember[] = members.map((member, index) => {
             const assignedMemberIndex = findIndexById(members[index].assignedTo, members);
             const assignedMember = members[assignedMemberIndex];
 
             const inviteLink = createUrl(
                 members[index],
                 assignedMember,
-                selectedCurrency,
-                budget,
-                date,
+                values.currency,
+                values.budget,
+                values.date,
             );
-            _members.push({
+            return {
                 ...member,
                 inviteLink: inviteLink,
-            });
+            };
         });
 
-        if (newGroupName.length !== 0) {
-            const group: Group = {
-                _id: "",
-                createdBy: localStorage.getItem("currentUser") ?? "",
-                name: newGroupName,
-                members: [..._members],
-            };
+        const group: Group = {
+            _id: "",
+            createdBy: localStorage.getItem("currentUser") ?? "",
+            name: values.groupName,
+            members: [..._members],
+        };
 
-            if (date.length > 0) {
-                group.date = date;
-            }
-
-            if (budget.length > 0) {
-                group.currencySymbol = selectedCurrency;
-                group.budget = budget;
-            }
-
-            saveGroup(group);
-        }
+        saveGroup(group);
     };
 
     return (
@@ -112,61 +117,74 @@ const CreateGroup = (props: Props): JSX.Element => {
                 className="col-md-5 col-sm-6 text-start mb-3 p-5"
                 style={{ zIndex: 1000 }}
             >
-                <h6>Group name</h6>
-                <InputText
-                    value={newGroupName}
-                    placeholder={"Enter name for group"}
-                    className="w-100"
-                    onChange={(e) => setNewGroupName(e.target.value)}
-                />
-                <h6 className="mt-2">
-                    Budget
-                    <span className="text-muted">- optional</span>
-                </h6>
-                <div className="d-flex">
-                    <Dropdown
-                        value={selectedCurrency}
-                        options={getCurrencySymbols()}
-                        onChange={(e) => setSelectedCurrency(e.value)}
-                        optionLabel="name"
-                        placeholder="Select a currency"
-                    />
-                    <InputText
-                        value={budget}
-                        placeholder={"Enter budget"}
-                        className="w-75 ms-2"
-                        onChange={(e) => setBudget(e.target.value)}
-                    />
-                </div>
-                <h6 className="mt-2">
-                    Date of gift exchange
-                    <span className="text-muted">- optional</span>
-                </h6>
-                <Calendar
-                    id="icon"
-                    dateFormat="yy-mm-dd"
-                    placeholder="Select date"
-                    className="w-100 mb-2"
-                    value={new Date(date)}
-                    onChange={(e) => setDate(e.value?.toString() ?? "")}
-                    monthNavigator
-                    yearNavigator
-                    yearRange={`1990:${currentYear}`}
-                    showIcon
-                />
-                <Button
-                    label="Save"
-                    onClick={() => (isSignedIn ? onSaveGroup() : setShowSignIn(true))}
-                    disabled={newGroupName.length === 0}
-                />
-
-                {isSuccess && (
-                    <Button
-                        className="p-button-outlined ms-2"
-                        label="Go to new group"
-                        onClick={() => history.push("/groups")}
-                    />
-                )}
+                <Formik
+                    initialValues={initialValues}
+                    onSubmit={(values, actions) => {
+                        console.log(values);
+                        isSignedIn ? onSaveGroup(values) : setShowSignIn(true);
+                    }}
+                    validationSchema={groupValidationSchema}
+                >
+                    {(props) => (
+                        <form onSubmit={props.handleSubmit}>
+                            <h6>Group name</h6>
+                            <InputText
+                                value={props.values.groupName}
+                                id="groupName"
+                                placeholder={"Enter name for group"}
+                                className="w-100"
+                                onChange={props.handleChange}
+                            />
+                            <h6 className="mt-2">
+                                Budget
+                                <span className="text-muted">- optional</span>
+                            </h6>
+                            <div className="d-flex">
+                                <Dropdown
+                                    id="currency"
+                                    value={props.values.currency}
+                                    options={getCurrencySymbols()}
+                                    optionLabel="name"
+                                    placeholder="Select a currency"
+                                    onChange={props.handleChange}
+                                />
+                                <InputText
+                                    id="budget"
+                                    value={props.values.budget}
+                                    placeholder={"Enter budget"}
+                                    className="w-100 ms-2"
+                                    onChange={props.handleChange}
+                                />
+                            </div>
+                            <h6 className="mt-2">
+                                Date of gift exchange
+                                <span className="text-muted">- optional</span>
+                            </h6>
+                            <Calendar
+                                inputId="date"
+                                dateFormat="yy-mm-dd"
+                                placeholder="Select date"
+                                className="w-100 mb-2"
+                                value={new Date(props.values.date)}
+                                onChange={props.handleChange}
+                                monthNavigator
+                                yearNavigator
+                                yearRange={`1990:${currentYear}`}
+                                showIcon
+                            />
+                            <div className="d-flex">
+                                <Button label="Create Group" type="submit" />
+                                {isSuccess && (
+                                    <Button
+                                        className="p-button-outlined ms-2"
+                                        label="Go to new group"
+                                        onClick={() => navigate("/groups")}
+                                    />
+                                )}
+                            </div>
+                        </form>
+                    )}
+                </Formik>
 
                 <AccountModals
                     isVisible={showSignIn}

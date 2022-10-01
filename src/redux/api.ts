@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { Group, User } from "../common/types";
+import type { EmailGroupPayload, Group, User } from "../common/types";
 
 type Payload = {
     _id: string;
@@ -32,14 +32,19 @@ export const api = createApi({
         baseUrl: "https://spiel-secret-santa-server.herokuapp.com/api/",
         prepareHeaders: (headers) => {
             const token = localStorage.getItem("token") || "";
-
             headers.set("auth-token", token);
-
             return headers;
         },
     }),
     tagTypes: ["GROUPS", "USER"],
     endpoints: (builder) => ({
+        emailGroups: builder.mutation({
+            query: (body: EmailGroupPayload) => ({
+                url: `groups/email`,
+                method: "POST",
+                body: body,
+            }),
+        }),
         getAllGroups: builder.query<Group[], string>({
             query: (id: string) => `groups/${id}`,
             providesTags: ["GROUPS"],
@@ -100,6 +105,7 @@ export const api = createApi({
 });
 
 export const {
+    useEmailGroupsMutation,
     useGetAllGroupsQuery,
     useInsertGroupMutation,
     useUpdateGroupByIdMutation,

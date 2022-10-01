@@ -6,6 +6,9 @@ import { LoginPayload } from "../../common/types";
 import { useLoginUserMutation } from "../../redux/api";
 import { useAppDispatch } from "../../redux/hooks";
 import { setSignInStatus } from "../../appSlice";
+import { FormikProps, FormikTouched, FormikErrors, Formik } from "formik";
+import { Button } from "primereact/button";
+import { object, string } from "yup";
 
 interface Props {
     isVisible: boolean;
@@ -13,15 +16,25 @@ interface Props {
     onHide: () => void;
 }
 
-type CurrentLoginPayload = keyof LoginPayload;
+const initialValues: LoginPayload = {
+    email: "",
+    password: "",
+};
+
+export const loginValidationSchema = object().shape({
+    email: string().trim().email().required("Email is required."),
+    password: string()
+        .trim()
+        .min(6, "Password must be at least 6 characters")
+        .required("Password is required"),
+});
+
+type Key = keyof LoginPayload;
+type FormProps = FormikProps<LoginPayload>;
+type Touched = FormikTouched<LoginPayload>;
+type Errors = FormikErrors<LoginPayload>;
 
 const LoginModal = (props: Props): JSX.Element => {
-    const [isEmailValid, setIsEmailValid] = React.useState(true);
-    const [isPasswordValid, setIsPasswordValid] = React.useState(true);
-    const [formData, setFormData] = React.useState<LoginPayload>({
-        email: "",
-        password: "",
-    });
     const dispatch = useAppDispatch();
     const [loginUser, { isError, data }] = useLoginUserMutation();
     const { isVisible, renderRegisterModal, onHide } = props;
@@ -35,81 +48,85 @@ const LoginModal = (props: Props): JSX.Element => {
         }
     }, [dispatch, isError, data, onHide]);
 
-    const onSubmit = () => {
-        verifyEmail();
-        setIsPasswordValid(formData.password.length >= 6);
-
-        if (isEmailValid && isPasswordValid) {
-            loginUser(formData);
-        }
-    };
-
-    const updateFormData = (name: CurrentLoginPayload, value: string) => {
-        const _formData = { ...formData };
-        _formData[name] = value;
-        setFormData(_formData);
-    };
-
-    const createErrorMessage = (isValid: boolean, message: string) => {
-        if (!isValid) {
-            return (
-                <small id="email-help" className="p-error p-d-block">
-                    {message}
-                </small>
-            );
-        }
-    };
-
-    const verifyEmail = () => {
-        const emailIsValid = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
-            formData.email,
+    const createInputText = (key: Key, label: string, formProps: FormProps) => {
+        const { handleChange, values, touched, errors } = formProps;
+        return (
+            <div className="p-field">
+                <label htmlFor={key}>{label}</label>
+                <div className="p-inputgroup">
+                    <InputText
+                        id={key}
+                        value={values[key]}
+                        placeholder={`Enter ${label.toLocaleLowerCase()}`}
+                        onChange={handleChange}
+                    />
+                </div>
+                {createError(key, errors, touched)}
+            </div>
         );
-        setIsEmailValid(emailIsValid);
+    };
+
+    const createPasswordInput = (
+        key: Key,
+        label: string,
+        placeHolder: string,
+        formProps: FormProps,
+    ) => {
+        const { handleChange, values, touched, errors } = formProps;
+        return (
+            <div className="p-field">
+                <label htmlFor={key}>{label}</label>
+                <div className="p-inputgroup">
+                    <Password
+                        inputId={key}
+                        toggleMask
+                        feedback={false}
+                        value={values[key]}
+                        placeholder={placeHolder}
+                        onChange={handleChange}
+                    />
+                </div>
+                {createError(key, errors, touched)}
+            </div>
+        );
+    };
+
+    const createError = (key: Key, errors: Errors, touched: Touched) => {
+        return (
+            <>
+                {errors[key] && touched[key] && (
+                    <small id={`${key}-help`} className="p-error p-d-block">
+                        {errors[key]}
+                    </small>
+                )}
+            </>
+        );
     };
 
     return (
         <Dialog header="Login" visible={isVisible} onHide={onHide}>
             <div className="p-grid p-fluid col">
-                <div className="p-field">
-                    <label htmlFor="name">Email Address</label>
-                    <div className="p-inputgroup">
-                        <InputText
-                            id="email"
-                            value={formData.email}
-                            placeholder="Enter email address"
-                            onChange={(e) => {
-                                updateFormData("email", e.target.value);
-                            }}
-                            required
-                        />
-                    </div>
-                    {createErrorMessage(isEmailValid, "Email is not valid.")}
-                </div>
+                <Formik
+                    initialValues={initialValues}
+                    onSubmit={(values, actions) => {
+                        loginUser(values);
+                    }}
+                    validationSchema={loginValidationSchema}
+                >
+                    {(props) => (
+                        <form onSubmit={props.handleSubmit}>
+                            {createInputText("email", "Email Address", props)}
+                            {createPasswordInput(
+                                "password",
+                                "Password",
+                                "Enter password",
+                                props,
+                            )}
 
-                <div className="p-field">
-                    <label htmlFor="password">Password</label>
-                    <div className="p-inputgroup">
-                        <Password
-                            id="password"
-                            value={formData.password}
-                            onChange={(e) => updateFormData("password", e.target.value)}
-                            toggleMask
-                            required
-                            feedback={false}
-                        />
-                    </div>
-                    {createErrorMessage(
-                        isPasswordValid,
-                        "Password must be at least 6 characters long.",
+                            <Button className="w-100 mt-2" label="Login" type="submit" />
+                        </form>
                     )}
-                </div>
-
-                <div className="d-flex align-items-center mt-2 mb-2">
-                    <button className="btn btn-primary w-100" onClick={onSubmit}>
-                        Login
-                    </button>
-                </div>
-
+                </Formik>
                 <div>
                     <p>
                         {`Don't have an account? Click`}

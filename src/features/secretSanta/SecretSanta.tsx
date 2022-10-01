@@ -5,7 +5,7 @@ import reindeer from "../../images/reindeer.gif";
 import santa from "../../images/santa-sled2.gif";
 import { Messages } from "primereact/messages";
 import { useAppQuery } from "../../redux/hooks";
-import Header from "../../components/Header";
+import Header from "../common/Header";
 import Snowfall from "react-snowfall";
 import { getFormattedDate } from "../../common/util";
 
@@ -176,7 +176,7 @@ const SecretSanta = (): JSX.Element => {
                                 <img
                                     src={reindeer}
                                     className="d-flex ms-auto me-auto"
-                                    alt="sex"
+                                    alt="reindeer"
                                     height={150}
                                 />
                             </div>

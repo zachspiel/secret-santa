@@ -1,5 +1,6 @@
 export interface GroupMember {
     name: string;
+    email: string;
     assignedTo: string;
     wishlist?: string;
     inviteLink?: string;
@@ -20,6 +21,13 @@ export interface Group {
     date?: string;
 }
 
+export interface GroupFormValues {
+    groupName: string;
+    date: string;
+    currency: string;
+    budget: string;
+}
+
 export interface User {
     _id: string;
     firstName: string;
@@ -37,6 +45,16 @@ export interface RegisterPayload {
 export interface LoginPayload {
     email: string;
     password: string;
+}
+
+export interface RegisterUserValues extends RegisterPayload {
+    passwordConfirmation: string;
+}
+
+export interface EmailGroupPayload {
+    subject: string;
+    message: string;
+    members: GroupMember[];
 }
 
 export type ModalTypes = "LOGIN_MODAL" | "REGISTER_MODAL";

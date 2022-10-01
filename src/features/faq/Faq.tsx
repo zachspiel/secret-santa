@@ -1,6 +1,6 @@
 import React from "react";
 import { Accordion, AccordionTab } from "primereact/accordion";
-import Header from "../../components/Header";
+import Header from "../common/Header";
 import { Card } from "primereact/card";
 import "./css/faq.css";
 
@@ -15,8 +15,9 @@ const Faq = (): JSX.Element => {
                             <AccordionTab header="How do I create a Secret Sanata group?">
                                 <p>
                                     Go to the <a href="/">home page</a> and add at least
-                                    three members, to get started. Please note that in order to save
-                                    this group, you must create an account or sign in.
+                                    three members, to get started. Please note that in
+                                    order to save this group, you must create an account
+                                    or sign in.
                                 </p>
                             </AccordionTab>
                             <AccordionTab header="How do I know everyone's Secret Santa?">

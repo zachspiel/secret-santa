@@ -1,12 +1,14 @@
-import React, { useState } from "react";
-import { Password } from "primereact/password";
+import React from "react";
 import { InputText } from "primereact/inputtext";
-import { RegisterPayload } from "../../common/types";
 import { Dialog } from "primereact/dialog";
 import { Message } from "primereact/message";
-import { useRegisterUserMutation } from "../../redux/api";
+import { RegisterPayload, useRegisterUserMutation } from "../../redux/api";
 import { useAppDispatch } from "../../redux/hooks";
 import { setSignInStatus } from "../../appSlice";
+import { object, string, ref } from "yup";
+import { Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
+import { Button } from "primereact/button";
+import { Password } from "primereact/password";
 
 interface Props {
     isVisible: boolean;
@@ -14,38 +16,48 @@ interface Props {
     onHide: () => void;
 }
 
-type CurrentRegisterPayload = keyof RegisterPayload;
+type Key = keyof RegisterUserValues;
+type FormProps = FormikProps<RegisterUserValues>;
+type Touched = FormikTouched<RegisterUserValues>;
+type Errors = FormikErrors<RegisterUserValues>;
+
+interface RegisterUserValues extends RegisterPayload {
+    passwordConfirmation: string;
+}
+
+const initialValues: RegisterUserValues = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    passwordConfirmation: "",
+};
+
+export const registerValidationSchema = object().shape({
+    firstName: string()
+        .trim()
+        .min(3, "First name must be at least 3 characters long.")
+        .max(20, "First name cannot be longer than 20 characters.")
+        .required("First name is required."),
+    lastName: string()
+        .trim()
+        .min(3, "Last name must be at least 3 characters long.")
+        .max(20, "Last name cannot be longer than 20 characters.")
+        .required("Last name is required."),
+    email: string().trim().email().required("Email is required."),
+    password: string()
+        .trim()
+        .min(6, "Password must be at least 6 characters")
+        .required("Password is required"),
+    passwordConfirmation: string()
+        .trim()
+        .oneOf([ref("password"), null], "Passwords must match"),
+});
 
 const RegisterModal = (props: Props): JSX.Element => {
-    const [isFirstNameValid, setIsFirstNameValid] = useState(true);
-    const [isLastNameValid, setIsLastNameValid] = useState(true);
-    const [isEmailValid, setIsEmailValid] = useState(true);
-    const [isPasswordValid, setIsPasswordValid] = useState(true);
-    const [isPasswordEqual, setIsPasswordEqual] = useState(true);
-    const [passwordCopy, setPasswordCopy] = useState("");
-    const [formData, setFormData] = useState<RegisterPayload>({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-    });
     const dispatch = useAppDispatch();
     const [registerUser, { isError, data }] = useRegisterUserMutation();
     const { isVisible, renderLoginModal, onHide } = props;
-    const isValid =
-        isFirstNameValid &&
-        isLastNameValid &&
-        isEmailValid &&
-        isPasswordValid &&
-        isPasswordEqual;
-
-    const onSubmit = () => {
-        verifyFormData();
-
-        if (isValid) {
-            registerUser(formData);
-        }
-    };
 
     React.useEffect(() => {
         if (!isError && data?.data !== undefined) {
@@ -56,134 +68,97 @@ const RegisterModal = (props: Props): JSX.Element => {
         }
     }, [dispatch, isError, data, onHide]);
 
-    const updateFormData = (name: CurrentRegisterPayload, value: string) => {
-        const _formData = { ...formData };
-        _formData[name] = value;
-        setFormData(_formData);
-    };
-
-    const verifyFormData = () => {
-        verifyEmail();
-        verifyPassword();
-        setIsFirstNameValid(formData.firstName.length >= 3);
-        setIsLastNameValid(formData.lastName.length >= 3);
-    };
-
-    const createErrorMessage = (isValid: boolean, message: string) => {
-        if (!isValid) {
-            return (
-                <small id="email-help" className="p-error p-d-block">
-                    {message}
-                </small>
-            );
-        }
-    };
-
-    const verifyPassword = () => {
-        setIsPasswordValid(formData.password.length >= 6);
-        setIsPasswordEqual(formData.password === passwordCopy);
-    };
-
-    const verifyEmail = () => {
-        const emailIsValid = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
-            formData.email,
+    const createInputText = (key: Key, label: string, formProps: FormProps) => {
+        const { handleChange, values, touched, errors } = formProps;
+        return (
+            <div className="p-field">
+                <label htmlFor={key}>{label}</label>
+                <div className="p-inputgroup">
+                    <InputText
+                        id={key}
+                        value={values[key]}
+                        placeholder={`Enter ${label.toLocaleLowerCase()}`}
+                        onChange={handleChange}
+                    />
+                </div>
+                {createError(key, errors, touched)}
+            </div>
         );
-        setIsEmailValid(emailIsValid);
     };
 
+    const createPasswordInput = (
+        key: Key,
+        label: string,
+        placeHolder: string,
+        formProps: FormProps,
+    ) => {
+        const { handleChange, values, touched, errors } = formProps;
+        return (
+            <div className="p-field">
+                <label htmlFor={key}>{label}</label>
+                <div className="p-inputgroup">
+                    <Password
+                        inputId={key}
+                        toggleMask
+                        feedback={false}
+                        value={values[key]}
+                        placeholder={placeHolder}
+                        onChange={handleChange}
+                    />
+                </div>
+                {createError(key, errors, touched)}
+            </div>
+        );
+    };
+
+    const createError = (key: Key, errors: Errors, touched: Touched) => {
+        return (
+            <>
+                {errors[key] && touched[key] && (
+                    <small id={`${key}-help`} className="p-error p-d-block">
+                        {errors[key]}
+                    </small>
+                )}
+            </>
+        );
+    };
     return (
         <Dialog header="Register" onHide={() => onHide} visible={isVisible}>
             <div className="p-grid p-fluid col">
-                <div className="p-field">
-                    <label htmlFor="name">First Name</label>
-                    <div className="p-inputgroup">
-                        <InputText
-                            id="firstName"
-                            value={formData.firstName}
-                            placeholder="Enter First name"
-                            onChange={(e) => {
-                                updateFormData("firstName", e.target.value);
-                            }}
-                            required
-                            autoFocus
-                        />
-                    </div>
-                    {createErrorMessage(
-                        isFirstNameValid,
-                        "First Name must be at least 3 characters long.",
-                    )}
-                </div>
-                <div className="p-field mb-2">
-                    <label htmlFor="lastName">Last Name</label>
-                    <div className="p-inputgroup">
-                        <InputText
-                            id="lastName"
-                            value={formData.lastName}
-                            placeholder="Enter last name"
-                            onChange={(e) => {
-                                updateFormData("lastName", e.target.value);
-                            }}
-                            required
-                            autoFocus
-                        />
-                    </div>
-                    {createErrorMessage(
-                        isLastNameValid,
-                        "Last Name must be at least 3 characters long.",
-                    )}
-                </div>
+                <Formik
+                    initialValues={initialValues}
+                    onSubmit={(values, actions) => {
+                        registerUser(values);
+                    }}
+                    validationSchema={registerValidationSchema}
+                >
+                    {(props) => (
+                        <form onSubmit={props.handleSubmit}>
+                            {createInputText("firstName", "First Name", props)}
+                            {createInputText("lastName", "Last Name", props)}
+                            {createInputText("email", "Email Address", props)}
+                            {createPasswordInput(
+                                "password",
+                                "Password",
+                                "Enter password",
+                                props,
+                            )}
+                            {createPasswordInput(
+                                "passwordConfirmation",
+                                "Confirm Password",
+                                "Confirm Password",
+                                props,
+                            )}
 
-                <div className="p-field mb-2">
-                    <label htmlFor="email">Email Address</label>
-                    <div className="p-inputgroup">
-                        <InputText
-                            id="email"
-                            value={formData.email}
-                            placeholder="Enter email address"
-                            onChange={(e) => {
-                                updateFormData("email", e.target.value);
-                            }}
-                            required
-                        />
-                    </div>
-                    {createErrorMessage(isEmailValid, "Email is not valid.")}
-                </div>
-                <div className="p-field">
-                    <label htmlFor="password">Password</label>
-                    <div className="p-inputgroup">
-                        <Password
-                            id="password"
-                            value={formData.password}
-                            placeholder="Enter password"
-                            onChange={(e) => {
-                                updateFormData("password", e.target.value);
-                            }}
-                            toggleMask
-                            required
-                        />
-                    </div>
-                    {createErrorMessage(
-                        isPasswordValid,
-                        "Password must be at least 6 characters long.",
+                            <Button
+                                className="w-100 mt-2"
+                                label="Register"
+                                type="submit"
+                            />
+                        </form>
                     )}
-                </div>
-                <div className="p-field">
-                    <label htmlFor="passwordCopy">Repeat Password</label>
-                    <div className="p-inputgroup">
-                        <Password
-                            id="passwordCopy"
-                            value={passwordCopy}
-                            placeholder="Repeat password"
-                            onChange={(e) => {
-                                setPasswordCopy(e.target.value);
-                            }}
-                            toggleMask
-                            feedback={false}
-                            required
-                        />
-                    </div>
-                    {createErrorMessage(isPasswordEqual, "Password must match.")}
-                </div>
+                </Formik>
+
                 {data?.error && (
                     <Message
                         severity="error"
@@ -191,11 +166,6 @@ const RegisterModal = (props: Props): JSX.Element => {
                         text={data?.error ?? "Error while registring user."}
                     />
                 )}
-                <div className="d-flex align-items-center mt-2 mb-2">
-                    <button className="btn btn-primary w-100" onClick={onSubmit}>
-                        Register
-                    </button>
-                </div>
 
                 <div>
                     <p>
@@ -206,7 +176,7 @@ const RegisterModal = (props: Props): JSX.Element => {
                         >
                             {` here `}
                         </span>
-                        here to login.
+                        to login.
                     </p>
                 </div>
             </div>

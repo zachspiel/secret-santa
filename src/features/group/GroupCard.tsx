@@ -4,10 +4,11 @@ import { Card } from "primereact/card";
 import { InputSwitch } from "primereact/inputswitch";
 import { ScrollPanel } from "primereact/scrollpanel";
 import { Toast } from "primereact/toast";
-import CopyToClipboard from "react-copy-to-clipboard";
 import { Group } from "../../common/types";
 import { getListOfNames, generateDraw, getFormattedDate } from "../../common/util";
 import { useUpdateGroupByIdMutation } from "../../redux/api";
+import copy from "copy-to-clipboard";
+import EmailGroup from "./EmailGroup";
 
 interface Props {
     group: Group;
@@ -86,6 +87,7 @@ const GroupCard = (props: Props): JSX.Element => {
     const Footer = (index: number) => {
         return (
             <div className="d-flex justify-content-end p-2">
+                <EmailGroup members={groupList[index].members} />
                 <Button
                     label="Delete"
                     className="p-button-outlined p-button-danger me-2"
@@ -137,22 +139,20 @@ const GroupCard = (props: Props): JSX.Element => {
                                         <p>{member.assignedTo}</p>
                                     )}
                                 </div>
-                                <CopyToClipboard
-                                    text={member.inviteLink ?? ""}
-                                    onCopy={() =>
+
+                                <Button
+                                    label="Copy invite"
+                                    className="p-button-text"
+                                    onClick={() => {
+                                        copy(member.inviteLink ?? "");
                                         props.toast.current?.show({
                                             severity: "success",
                                             summary: "Success",
                                             detail: "Invite sucessfully copied.",
                                             life: 3000,
-                                        })
-                                    }
-                                >
-                                    <Button
-                                        label="Copy invite"
-                                        className="p-button-text"
-                                    />
-                                </CopyToClipboard>
+                                        });
+                                    }}
+                                />
                             </div>
                         );
                     })}
