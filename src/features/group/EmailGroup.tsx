@@ -24,19 +24,23 @@ const EmailGroup = (props: Props): JSX.Element => {
     const messages = React.useRef<Messages>(null);
 
     React.useEffect(() => {
-        messages?.current?.show({
-            severity: "success",
-            summary: "Emails sent successfully",
-            life: 5000,
-        });
+        if (isSuccess) {
+            messages?.current?.show({
+                severity: "success",
+                summary: "Emails sent successfully",
+                life: 5000,
+            });
+        }
     }, [isSuccess]);
 
     React.useEffect(() => {
-        messages?.current?.show({
-            severity: "error",
-            summary: "An error occurred. Please try again later.",
-            life: 5000,
-        });
+        if (isError) {
+            messages?.current?.show({
+                severity: "error",
+                summary: "An error occurred. Please try again later.",
+                life: 5000,
+            });
+        }
     }, [isError]);
 
     const initialValues: EmailGroupPayload = {
@@ -50,7 +54,7 @@ const EmailGroup = (props: Props): JSX.Element => {
             <Dialog
                 visible={isVisible}
                 onHide={() => setIsVisible(false)}
-                style={{ width: "50vw" }}
+                breakpoints={{ "960px": "75vw", "640px": "100vw" }}
             >
                 <Formik
                     initialValues={initialValues}

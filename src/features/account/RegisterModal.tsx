@@ -123,7 +123,12 @@ const RegisterModal = (props: Props): JSX.Element => {
         );
     };
     return (
-        <Dialog header="Register" onHide={() => onHide} visible={isVisible}>
+        <Dialog
+            header="Register"
+            onHide={() => onHide}
+            visible={isVisible}
+            breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+        >
             <div className="p-grid p-fluid col">
                 <Formik
                     initialValues={initialValues}

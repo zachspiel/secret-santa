@@ -104,7 +104,12 @@ const LoginModal = (props: Props): JSX.Element => {
     };
 
     return (
-        <Dialog header="Login" visible={isVisible} onHide={onHide}>
+        <Dialog
+            header="Login"
+            visible={isVisible}
+            onHide={onHide}
+            breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+        >
             <div className="p-grid p-fluid col">
                 <Formik
                     initialValues={initialValues}

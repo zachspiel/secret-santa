@@ -52,7 +52,7 @@ const EditMember = (props: Props): JSX.Element => {
         <Dialog
             header="Edit Member"
             visible={isVisible}
-            style={{ width: "50vw" }}
+            breakpoints={{ "960px": "75vw", "640px": "100vw" }}
             onHide={closeModal}
         >
             {showMessage && (

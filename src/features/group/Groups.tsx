@@ -10,7 +10,6 @@ import { useDeleteGroupByIdMutation, useGetAllGroupsQuery } from "../../redux/ap
 import { setGroups } from "./groupSlice";
 import Snowfall from "react-snowfall";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
-import "../home/scss/styles.scss";
 import groupImage from "../../images/undraw_Having_fun_re_vj4h.png";
 import { Skeleton } from "primereact/skeleton";
 import GroupCard from "./GroupCard";
