@@ -86,16 +86,16 @@ const GroupCard = (props: Props): JSX.Element => {
 
     const Footer = (index: number) => {
         return (
-            <div className="d-flex justify-content-end p-2">
+            <div className="d-flex justify-content-md-end justify-content-sm-center p-2">
                 <EmailGroup members={groupList[index].members} />
                 <Button
                     label="Delete"
-                    className="p-button-outlined p-button-danger me-2"
+                    className="p-button-outlined p-button-danger p-button-sm me-2"
                     onClick={() => props.onDeleteGroup(index)}
                 />
                 <Button
                     label="Re-shuffle list"
-                    className="p-button-outlined me-2"
+                    className="p-button-outlined p-button-sm"
                     onClick={() => {
                         const _members = [...groupList[index].members];
                         const names = getListOfNames(_members);
@@ -111,7 +111,7 @@ const GroupCard = (props: Props): JSX.Element => {
         );
     };
     return (
-        <div className="col-lg-4 col-sm-6 mt-2 mb-5">
+        <div className="col-xl-4 col-md-6 col-sm-12 mt-2 mb-5">
             <Card
                 className="border"
                 title={group.name}

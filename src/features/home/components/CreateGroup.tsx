@@ -13,9 +13,10 @@ import { useNavigate } from "react-router";
 import AccountModals from "../../account/AccountModals";
 import { Formik } from "formik";
 import { object, string } from "yup";
+import { ToastSeverityType } from "primereact/toast";
 
 interface Props {
-    createToast: (message: string, summary: string, severity: string) => void;
+    createToast: (message: string, summary: string, severity: ToastSeverityType) => void;
 }
 
 interface CurrencyOptions {

@@ -4,7 +4,7 @@ import Header from "../common/Header";
 import AddMember from "./components/AddMember";
 import CreateGroup from "./components/CreateGroup";
 import { Steps } from "primereact/steps";
-import { Toast } from "primereact/toast";
+import { Toast, ToastSeverityType } from "primereact/toast";
 import Snowfall from "react-snowfall";
 import Exclusions from "./components/Exclusions";
 import { setCurrentStep } from "../../appSlice";
@@ -15,7 +15,11 @@ const AddGroupMembers = (): JSX.Element => {
     const toast = React.useRef<Toast>(null);
     const dispatch = useAppDispatch();
 
-    const displayToastMessage = (message: string, summary: string, severity: string) => {
+    const displayToastMessage = (
+        message: string,
+        summary: string,
+        severity: ToastSeverityType,
+    ) => {
         toast?.current?.show({
             severity: severity,
             summary: summary,

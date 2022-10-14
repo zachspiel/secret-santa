@@ -110,7 +110,11 @@ const EmailGroup = (props: Props): JSX.Element => {
                                     className="p-button-outlined me-2"
                                     onClick={() => props.resetForm()}
                                 />
-                                <Button label="Email members" type="submit" />
+                                <Button
+                                    label="Email members"
+                                    className="p-button-sm"
+                                    type="submit"
+                                />
                             </div>
                         </form>
                     )}
@@ -118,7 +122,7 @@ const EmailGroup = (props: Props): JSX.Element => {
             </Dialog>
             <Button
                 label="Email links"
-                className="p-button-outlined me-2"
+                className="p-button-outlined p-button-sm me-2"
                 onClick={() => setIsVisible(true)}
             />
         </>

@@ -14,7 +14,7 @@ const MembersList = (): JSX.Element => {
     const panelClass = members.length > 0 ? "border mb-2" : "mb-2";
 
     return (
-        <div className="col-md-3 p-3">
+        <div className="col-lg-3 col-md-4 p-3">
             <div className="text-center">
                 <h5>Draw names with</h5>
             </div>
@@ -50,7 +50,7 @@ const MembersList = (): JSX.Element => {
             {members.length > 0 && (
                 <Button
                     label="Delete all members"
-                    className="p-button-outlined me-2"
+                    className="p-button-outlined p-button-sm"
                     onClick={() => dispatch(setMembersList([]))}
                 />
             )}

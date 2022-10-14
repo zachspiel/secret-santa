@@ -42,7 +42,7 @@ const Exclusions = (): JSX.Element => {
                 {members.length < 6 && (
                     <Message
                         severity="info"
-                        text="Your group is too small for exclusions."
+                        text="Your group is too small for exclusions. There must be at least 6 people in your group."
                     />
                 )}
             </div>
@@ -98,7 +98,7 @@ const Exclusions = (): JSX.Element => {
                 />
                 <Button
                     label="Next"
-                    className="p-button mb-2"
+                    className="p-button p-button-sm mb-2"
                     onClick={() => {
                         const _members = [...members];
                         const names = getListOfNames(_members);

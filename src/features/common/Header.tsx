@@ -61,7 +61,7 @@ const Header = (): JSX.Element => {
     return (
         <>
             <div className="row justify-content-end">
-                <div className="col-md-2 col-lg-4 col-sm-8 mt-2 d-inline-flex justify-content-end">
+                <div className="col-md-6 col-sm-8 mt-2 d-inline-flex justify-content-end">
                     <Button
                         label="Home"
                         className={`p-button p-button-danger me-2 h-50 mt-3 ${

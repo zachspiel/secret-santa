@@ -43,7 +43,7 @@ const AddMember = (): JSX.Element => {
 
     return (
         <div className="row justify-content-center mt-4">
-            <div className="col-md-4 col-sm-12 border-end mb-2">
+            <div className="col-lg-4 col-md-6 col-sm-12 border-end mb-2">
                 <div className="text-start p-3">
                     <div className="text-center">
                         <h5>Add Member</h5>
@@ -58,10 +58,14 @@ const AddMember = (): JSX.Element => {
                                 <AddMemberForm {...props} />
                                 <Button
                                     label="Reset"
-                                    className="p-button-outlined me-2"
+                                    className="p-button-outlined p-button-sm me-2"
                                     onClick={() => props.resetForm()}
                                 />
-                                <Button label="Add member" type="submit" />
+                                <Button
+                                    label="Add member"
+                                    className="p-button-sm"
+                                    type="submit"
+                                />
                             </form>
                         )}
                     </Formik>
@@ -78,7 +82,7 @@ const AddMember = (): JSX.Element => {
                 <div className="mt-3">
                     <Button
                         label="Next"
-                        className="p-button mb-2"
+                        className="p-button p-button-sm mb-2"
                         onClick={() => dispatch(setCurrentStep(1))}
                     />
                 </div>
