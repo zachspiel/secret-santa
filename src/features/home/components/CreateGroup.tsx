@@ -84,7 +84,6 @@ const CreateGroup = (props: Props): JSX.Element => {
     };
 
     const onSaveGroup = (values: GroupPayload) => {
-        console.log("gere");
         const _members: GroupMember[] = members.map((member, index) => {
             const assignedMemberIndex = findIndexById(members[index].assignedTo, members);
             const assignedMember = members[assignedMemberIndex];
@@ -121,7 +120,6 @@ const CreateGroup = (props: Props): JSX.Element => {
                 <Formik
                     initialValues={initialValues}
                     onSubmit={(values, actions) => {
-                        console.log(values);
                         isSignedIn ? onSaveGroup(values) : setShowSignIn(true);
                     }}
                     validationSchema={groupValidationSchema}

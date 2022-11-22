@@ -92,6 +92,7 @@ const createUrl = (
             url.searchParams.append("wishlist", encryptString(value));
         } else if (
             key !== "exclusions" &&
+            key !== "inviteLink" &&
             key !== "assignedTo" &&
             key !== "_id" &&
             key !== "name"

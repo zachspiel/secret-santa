@@ -5,7 +5,13 @@ import { InputSwitch } from "primereact/inputswitch";
 import { ScrollPanel } from "primereact/scrollpanel";
 import { Toast } from "primereact/toast";
 import { Group } from "../../common/types";
-import { getListOfNames, generateDraw, getFormattedDate } from "../../common/util";
+import {
+    getListOfNames,
+    generateDraw,
+    getFormattedDate,
+    createUrl,
+    findIndexById,
+} from "../../common/util";
 import { useUpdateGroupByIdMutation } from "../../redux/api";
 import copy from "copy-to-clipboard";
 import EmailGroup from "./EmailGroup";
@@ -97,13 +103,30 @@ const GroupCard = (props: Props): JSX.Element => {
                     label="Re-shuffle list"
                     className="p-button-outlined p-button-sm"
                     onClick={() => {
+                        const { currencySymbol, budget, date } = groupList[index];
                         const _members = [...groupList[index].members];
                         const names = getListOfNames(_members);
-                        const santaList = generateDraw(names, [...names], [..._members]);
+                        let updatedGroup = generateDraw(names, [...names], _members);
+
+                        updatedGroup = updatedGroup.map((member) => {
+                            const assignedToIndex = findIndexById(
+                                member.assignedTo,
+                                updatedGroup,
+                            );
+                            const inviteLink = createUrl(
+                                member,
+                                updatedGroup[assignedToIndex],
+                                currencySymbol,
+                                budget,
+                                date,
+                            );
+
+                            return { ...member, inviteLink };
+                        });
 
                         updateGroup({
                             _id: groupList[index]._id,
-                            body: { ...groupList[index], members: santaList },
+                            body: { ...groupList[index], members: updatedGroup },
                         });
                     }}
                 />

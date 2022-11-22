@@ -55,7 +55,7 @@ const SecretSanta = (): JSX.Element => {
         setTimeout(() => {
             setDisplaySanta(false);
             window.open(newUrl, "_blank");
-        }, 5000);
+        }, 3000);
     };
 
     const playPresentAnimation = () => {
