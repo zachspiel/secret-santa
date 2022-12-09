@@ -21,7 +21,7 @@ const AddMember = (): JSX.Element => {
     const editMemberIndex = useAppSelector((state) => state.members.editMemberIndex);
     const [error, setError] = React.useState("");
 
-    const initialValue = [initialValues].map((x) => x)[0];
+    const initialValue = [{ ...initialValues }].map((x) => x)[0];
 
     const insertMember = (values: AddMemberFormValues, actions: Actions) => {
         if (members.findIndex((member) => member.name === values.name) !== -1) {
@@ -54,7 +54,7 @@ const AddMember = (): JSX.Element => {
                         validationSchema={validationSchema}
                     >
                         {(props) => (
-                            <form onSubmit={props.handleSubmit}>
+                            <form onSubmit={props.handleSubmit} id="add-member-form">
                                 <AddMemberForm {...props} />
                                 <Button
                                     label="Reset"

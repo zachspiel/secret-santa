@@ -109,6 +109,7 @@ const LoginModal = (props: Props): JSX.Element => {
             visible={isVisible}
             onHide={onHide}
             breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+            style={{ width: "50vw" }}
         >
             <div className="p-grid p-fluid col">
                 <Formik

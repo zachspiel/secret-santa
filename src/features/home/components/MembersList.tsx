@@ -41,7 +41,17 @@ const MembersList = (): JSX.Element => {
                             <Button
                                 icon="pi pi-times"
                                 className="p-button-rounded p-button-text text-danger"
-                                onClick={() => dispatch(removeMember(member))}
+                                onClick={() => {
+                                    dispatch(removeMember(member));
+                                    localStorage.setItem(
+                                        "currentMembers",
+                                        JSON.stringify(
+                                            members.filter(
+                                                (person) => person.name !== member.name,
+                                            ),
+                                        ),
+                                    );
+                                }}
                             />
                         </span>
                     </div>

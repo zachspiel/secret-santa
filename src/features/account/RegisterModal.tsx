@@ -128,6 +128,7 @@ const RegisterModal = (props: Props): JSX.Element => {
             onHide={() => onHide}
             visible={isVisible}
             breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+            style={{ width: "50vw" }}
         >
             <div className="p-grid p-fluid col">
                 <Formik

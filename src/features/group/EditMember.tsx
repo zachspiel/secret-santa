@@ -19,7 +19,7 @@ const EditMember = (props: Props): JSX.Element => {
     const [showMessage, setShowMessage] = React.useState(false);
     const dispatch = useAppDispatch();
 
-    const initialValue = [initialValues].map((x) => x)[0];
+    const initialValue = [{ ...initialValues }].map((x) => x)[0];
 
     React.useEffect(() => {
         if (editMemberIndex !== -1) {
@@ -53,6 +53,7 @@ const EditMember = (props: Props): JSX.Element => {
             header="Edit Member"
             visible={isVisible}
             breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+            style={{ width: "50vw" }}
             onHide={closeModal}
         >
             {showMessage && (
@@ -77,7 +78,7 @@ const EditMember = (props: Props): JSX.Element => {
             >
                 {(props) => (
                     <form onSubmit={props.handleSubmit}>
-                        <AddMemberForm {...props} />{" "}
+                        <AddMemberForm {...props} />
                         <div className="d-flex justify-content-end">
                             <Button
                                 label="Cancel"

@@ -80,7 +80,7 @@ const createUrl = (
     budget?: string,
     date?: string,
 ): string => {
-    const url: URL = new URL("https://spiel-secret-santa.herokuapp.com/getSecretSanta/");
+    const url: URL = new URL("https://spiel-secret-santa.vercel.app/getSecretSanta/");
     url.searchParams.append("name", member.name);
     url.searchParams.append("selected", encryptString(member.assignedTo));
     url.searchParams.append("currency", encryptString(currency ?? ""));

@@ -55,6 +55,7 @@ const EmailGroup = (props: Props): JSX.Element => {
                 visible={isVisible}
                 onHide={() => setIsVisible(false)}
                 breakpoints={{ "960px": "75vw", "640px": "100vw" }}
+                style={{ width: "50vw" }}
             >
                 <Formik
                     initialValues={initialValues}

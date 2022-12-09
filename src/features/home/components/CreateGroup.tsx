@@ -59,6 +59,7 @@ const CreateGroup = (props: Props): JSX.Element => {
         if (isSuccess) {
             createToast("Group successfully created.", "Success", "success");
             dispatch(setMembersList([]));
+            localStorage.setItem("currentMembers", "[]");
         }
     }, [dispatch, isSuccess]);
 

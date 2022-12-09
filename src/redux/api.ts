@@ -29,7 +29,7 @@ interface Authenticationresponse {
 export const api = createApi({
     reducerPath: "api",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://spiel-secret-santa-server.herokuapp.com/api/",
+        baseUrl: "http://localhost:3001/api/",
         prepareHeaders: (headers) => {
             const token = localStorage.getItem("token") || "";
             headers.set("auth-token", token);
@@ -40,7 +40,7 @@ export const api = createApi({
     endpoints: (builder) => ({
         emailGroups: builder.mutation({
             query: (body: EmailGroupPayload) => ({
-                url: `groups/email`,
+                url: `email`,
                 method: "POST",
                 body: body,
             }),
