@@ -29,7 +29,7 @@ interface Authenticationresponse {
 export const api = createApi({
     reducerPath: "api",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:3001/api/",
+        baseUrl: "https://secret-santa-server-cxnvzz05u-zachspiel.vercel.app/api/",
         prepareHeaders: (headers) => {
             const token = localStorage.getItem("token") || "";
             headers.set("auth-token", token);
