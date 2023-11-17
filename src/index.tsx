@@ -9,7 +9,7 @@ import "primeicons/primeicons.css";
 import "./App.css";
 import { BrowserRouter } from "react-router-dom";
 
-import * as ReactDOMClient from "react-dom/client"; //icons
+import * as ReactDOMClient from "react-dom/client";
 
 const container = document.getElementById("root");
 
