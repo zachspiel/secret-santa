@@ -5,16 +5,18 @@ with friends and family.
 
 [https://spiel-secret-santa.vercel.app/](https://spiel-secret-santa.vercel.app/)
 
-## Installation
+## Getting Started
+
+### Install Dependencies
 
 ```bash
   yarn install
 ```
 
-## Usage
+### Start Development Server
 
 ```bash
-  yarn devstart
+  yarn dev:start
 ```
 
 ## 🧰 Tech Stack
