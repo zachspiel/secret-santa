@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { GroupPayload } from "../features/home/components/CreateGroup";
+import { SelectedForm } from "../types/FormTypes";
 import type { GroupMember } from "./types";
 
 const getListOfNames = (members: GroupMember[]): string[] => {
@@ -76,16 +78,18 @@ const findIndexById = (name: string, members: GroupMember[]): number => {
 const createUrl = (
     member: GroupMember,
     assignedMember: GroupMember,
-    currency?: string,
-    budget?: string,
-    date?: string,
+    groupData: GroupPayload,
+    formType: SelectedForm,
 ): string => {
     const url: URL = new URL("https://spiel-secret-santa.vercel.app/getSecretSanta/");
-    url.searchParams.append("name", member.name);
     url.searchParams.append("selected", encryptString(member.assignedTo));
-    url.searchParams.append("currency", encryptString(currency ?? ""));
-    url.searchParams.append("budget", encryptString(budget ?? ""));
-    url.searchParams.append("date", encryptString(date ?? ""));
+    url.searchParams.append("currency", encryptString(groupData.currency));
+    url.searchParams.append("budget", encryptString(groupData.budget));
+    url.searchParams.append("date", encryptString(groupData.date));
+    url.searchParams.append("formType", encryptString(formType));
+    url.searchParams.append("id", member.id);
+    url.searchParams.append("name", member.name);
+    url.searchParams.append("groupId", member.groupId ?? "");
 
     for (const [key, value] of Object.entries(assignedMember)) {
         if (key === "wishlist") {
@@ -179,4 +183,5 @@ export {
     generateDraw,
     getFormattedDate,
     getAllAvailableCurrency,
+    encryptString,
 };

@@ -26,10 +26,19 @@ interface Authenticationresponse {
     };
 }
 
+export interface SendMessagePayload {
+    subject: string;
+    message: string;
+    email: string;
+    url: string;
+    type: "question" | "answer";
+}
+
 export const api = createApi({
     reducerPath: "api",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://secret-santa-server-cxnvzz05u-zachspiel.vercel.app/api/",
+        baseUrl: "https://secret-santa-server-zachspiel.vercel.app/api/",
+        //baseUrl: "http://localhost:3001/api/",
         prepareHeaders: (headers) => {
             const token = localStorage.getItem("token") || "";
             headers.set("auth-token", token);
@@ -48,6 +57,9 @@ export const api = createApi({
         getAllGroups: builder.query<Group[], string>({
             query: (id: string) => `groups/${id}`,
             providesTags: ["GROUPS"],
+        }),
+        getGroupById: builder.query<Group, string>({
+            query: (id: string) => `group/${id}`,
         }),
         insertGroup: builder.mutation<Group, Group>({
             query: (body: Group) => ({
@@ -101,6 +113,13 @@ export const api = createApi({
             }),
             invalidatesTags: ["USER"],
         }),
+        sendMessage: builder.mutation<undefined, SendMessagePayload>({
+            query: (body) => ({
+                url: "sendMessage",
+                method: "POST",
+                body: body,
+            }),
+        }),
     }),
 });
 
@@ -113,5 +132,7 @@ export const {
     useLoginUserMutation,
     useRegisterUserMutation,
     useGetUserByIdQuery,
+    useGetGroupByIdQuery,
     useUpdateUserByIdMutation,
+    useSendMessageMutation,
 } = api;

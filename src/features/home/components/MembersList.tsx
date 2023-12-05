@@ -47,7 +47,7 @@ const MembersList = (): JSX.Element => {
                                         "currentMembers",
                                         JSON.stringify(
                                             members.filter(
-                                                (person) => person.name !== member.name,
+                                                (person) => person.id !== member.id,
                                             ),
                                         ),
                                     );

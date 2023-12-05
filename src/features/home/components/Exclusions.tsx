@@ -5,7 +5,7 @@ import { InputSwitch } from "primereact/inputswitch";
 import { setMembersList, toggleEnableExclusions } from "../../../redux/membersSlice";
 import { GroupMember } from "../../../common/types";
 import { Button } from "primereact/button";
-import { setCurrentStep } from "../../../appSlice";
+import { progressToNextStep, progressToPreviousStep } from "../../../appSlice";
 import { getListOfNames, generateDraw } from "../../../common/util";
 import { Message } from "primereact/message";
 import { ScrollPanel } from "primereact/scrollpanel";
@@ -93,7 +93,7 @@ const Exclusions = (): JSX.Element => {
                     label="Back"
                     className="p-button-outlined mb-2 me-2"
                     onClick={() => {
-                        dispatch(setCurrentStep(0));
+                        dispatch(progressToPreviousStep());
                     }}
                 />
                 <Button
@@ -105,7 +105,7 @@ const Exclusions = (): JSX.Element => {
                         dispatch(
                             setMembersList(generateDraw(names, [...names], _members)),
                         );
-                        dispatch(setCurrentStep(2));
+                        dispatch(progressToNextStep());
                     }}
                 />
             </div>

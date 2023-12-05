@@ -5,8 +5,9 @@ import { Button } from "primereact/button";
 import { GroupMember } from "../../common/types";
 import { setEditMemberIndex } from "../../redux/membersSlice";
 import { Message } from "primereact/message";
-import { Formik } from "formik";
-import AddMemberForm, { initialValues, validationSchema } from "../common/AddMemberForm";
+import { FormProvider, useForm } from "react-hook-form";
+import { FORM_ONE, FORM_TWO } from "../common/Forms";
+import Field from "../common/Field";
 
 interface Props {
     onSave: (groupMember: GroupMember) => void;
@@ -14,23 +15,24 @@ interface Props {
 
 const EditMember = (props: Props): JSX.Element => {
     const memberList = useAppSelector((state) => state.members.membersList);
+    const selectedForm = useAppSelector((state) => state.app.selectedForm);
     const editMemberIndex = useAppSelector((state) => state.members.editMemberIndex);
     const [isVisible, setIsVisible] = React.useState(false);
     const [showMessage, setShowMessage] = React.useState(false);
     const dispatch = useAppDispatch();
-
-    const initialValue = [{ ...initialValues }].map((x) => x)[0];
+    const methods = useForm();
+    const form = selectedForm === "form-one" ? FORM_ONE : FORM_TWO;
 
     React.useEffect(() => {
         if (editMemberIndex !== -1) {
             for (const [key, value] of Object.entries(memberList[editMemberIndex])) {
-                initialValue[key] = value;
+                methods.setValue(key, value);
             }
             setIsVisible(true);
         } else {
             setIsVisible(false);
         }
-    }, [editMemberIndex, initialValue, memberList]);
+    }, [editMemberIndex, memberList]);
 
     React.useEffect(() => {
         if (showMessage) {
@@ -46,6 +48,15 @@ const EditMember = (props: Props): JSX.Element => {
         setShowMessage(false);
         dispatch(setEditMemberIndex(-1));
         setIsVisible(false);
+    };
+
+    const onSubmit = (values: any) => {
+        setShowMessage(true);
+        const updatedMember = {
+            ...memberList[editMemberIndex],
+            ...values,
+        };
+        props.onSave(updatedMember);
     };
 
     return (
@@ -64,35 +75,24 @@ const EditMember = (props: Props): JSX.Element => {
                 />
             )}
 
-            <Formik
-                initialValues={initialValue}
-                onSubmit={(values, actions) => {
-                    setShowMessage(true);
-                    const updatedMember = {
-                        ...memberList[editMemberIndex],
-                        ...values,
-                    };
-                    props.onSave(updatedMember);
-                }}
-                validationSchema={validationSchema}
-            >
-                {(props) => (
-                    <form onSubmit={props.handleSubmit}>
-                        <AddMemberForm {...props} />
-                        <div className="d-flex justify-content-end">
-                            <Button
-                                label="Cancel"
-                                className="p-button-outlined me-2"
-                                onClick={() => {
-                                    setShowMessage(false);
-                                    closeModal();
-                                }}
-                            />
-                            <Button label="Save" type="submit" />
-                        </div>
-                    </form>
-                )}
-            </Formik>
+            <FormProvider {...methods}>
+                <form onSubmit={methods.handleSubmit(onSubmit)} id="add-member-form">
+                    {form.map((field) => (
+                        <Field {...field} key={field.name} />
+                    ))}
+                    <div className="d-flex justify-content-end">
+                        <Button
+                            label="Cancel"
+                            className="p-button-outlined me-2"
+                            onClick={() => {
+                                setShowMessage(false);
+                                closeModal();
+                            }}
+                        />
+                        <Button label="Save" type="submit" />
+                    </div>
+                </form>
+            </FormProvider>
         </Dialog>
     );
 };

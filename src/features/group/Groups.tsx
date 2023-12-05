@@ -26,7 +26,6 @@ const Groups = (): JSX.Element => {
     const { data, isLoading } = useGetAllGroupsQuery(
         localStorage.getItem("currentUser") ?? skipToken,
     );
-
     const [deleteGroup, { isSuccess, isError }] = useDeleteGroupByIdMutation();
 
     React.useEffect(() => {
