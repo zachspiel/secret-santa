@@ -4,10 +4,10 @@ import { useAppQuery } from "../../redux/hooks";
 import { InputText } from "primereact/inputtext";
 import { FormProvider, useForm } from "react-hook-form";
 import { Button } from "primereact/button";
-import { useSendMessageMutation } from "../../redux/api";
-import { Toast } from "primereact/toast";
+import { PRODUCTION_URL, useSendMessageMutation } from "../../redux/api";
 import React from "react";
 import { encryptString } from "../../common/util";
+import { Messages } from "primereact";
 
 const SecretSantaMessage = (): JSX.Element => {
     const methods = useForm();
@@ -15,13 +15,13 @@ const SecretSantaMessage = (): JSX.Element => {
     const message = atob(query.get("message") ?? "");
     const email = atob(query.get("email") ?? "");
     const type = query.get("type");
-    const toast = React.useRef<Toast>(null);
     const [sendMessage] = useSendMessageMutation();
+    const messageRef = React.useRef<Messages>(null);
 
     const onSubmit = (data) => sendResponse(data);
 
     const sendResponse = ({ response }: { response: string }) => {
-        const url: URL = new URL("http://localhost:3000/secretSantaMessage/");
+        const url: URL = new URL(`${PRODUCTION_URL}/secretSantaMessage/`);
         url.searchParams.append("type", "recieved-response");
         url.searchParams.append("message", encryptString(response));
         url.searchParams.append("email", encryptString(query.get("email") ?? ""));
@@ -33,7 +33,27 @@ const SecretSantaMessage = (): JSX.Element => {
                 subject: "You recieved a response from your Secret Santa!",
                 url: url.toString(),
                 type: "answer",
-            });
+            })
+                .then(() => {
+                    messageRef?.current?.show([
+                        {
+                            severity: "success",
+                            summary: "",
+                            detail: "Successfully sent message",
+                            life: 3000,
+                        },
+                    ]);
+                })
+                .catch(() => {
+                    messageRef?.current?.show([
+                        {
+                            severity: "error",
+                            summary: "",
+                            detail: "Error sending message, please try again later",
+                            life: 3000,
+                        },
+                    ]);
+                });
         }
     };
 
@@ -46,6 +66,8 @@ const SecretSantaMessage = (): JSX.Element => {
                         className="card p-3 border-0 text-start"
                         style={{ zIndex: 1000 }}
                     >
+                        <Messages ref={messageRef} />
+
                         {type === "send-response" && (
                             <>
                                 <p>
@@ -103,7 +125,6 @@ const SecretSantaMessage = (): JSX.Element => {
             </div>
 
             <Snowfall color="white" />
-            <Toast ref={toast} />
         </div>
     );
 };
