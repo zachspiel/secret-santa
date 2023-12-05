@@ -34,11 +34,13 @@ export interface SendMessagePayload {
     type: "question" | "answer";
 }
 
+export const PRODUCTION_URL = "https://spiel-secret-santa.vercel.app";
+export const BASE_API_URL = "https://secret-santa-server-zachspiel.vercel.app";
+
 export const api = createApi({
     reducerPath: "api",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://secret-santa-server-zachspiel.vercel.app/api/",
-        //baseUrl: "http://localhost:3001/api/",
+        baseUrl: `${BASE_API_URL}/api/`,
         prepareHeaders: (headers) => {
             const token = localStorage.getItem("token") || "";
             headers.set("auth-token", token);

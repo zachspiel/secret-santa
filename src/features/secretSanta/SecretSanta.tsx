@@ -10,7 +10,12 @@ import Snowfall from "react-snowfall";
 import { encryptString, getFormattedDate } from "../../common/util";
 import { FORM_ONE, FORM_TWO, FieldType } from "../common/Forms";
 import { SelectedForm } from "../../types/FormTypes";
-import { useGetGroupByIdQuery, useSendMessageMutation } from "../../redux/api";
+import {
+    BASE_API_URL,
+    PRODUCTION_URL,
+    useGetGroupByIdQuery,
+    useSendMessageMutation,
+} from "../../redux/api";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { FormProvider, useForm } from "react-hook-form";
 import { InputText } from "primereact/inputtext";
@@ -94,7 +99,7 @@ const SecretSanta = (): JSX.Element => {
     const onSubmit = (data) => sendResponse(data);
 
     const sendResponse = ({ question }: { question: string }) => {
-        const url: URL = new URL("http://localhost:3000/secretSantaMessage/");
+        const url: URL = new URL(`${PRODUCTION_URL}/secretSantaMessage/`);
         url.searchParams.append("type", "send-response");
         url.searchParams.append("message", encryptString(question));
 
@@ -111,16 +116,27 @@ const SecretSanta = (): JSX.Element => {
                 subject: "You recieved a question from your Secret Santa!",
                 url: url.toString(),
                 type: "question",
-            });
-
-            message?.current?.show([
-                {
-                    severity: "success",
-                    summary: "",
-                    detail: "Successfully sent message",
-                    life: 3000,
-                },
-            ]);
+            })
+                .then(() => {
+                    message?.current?.show([
+                        {
+                            severity: "success",
+                            summary: "",
+                            detail: "Successfully sent message",
+                            life: 3000,
+                        },
+                    ]);
+                })
+                .catch(() => {
+                    message?.current?.show([
+                        {
+                            severity: "error",
+                            summary: "",
+                            detail: "Error sending message, please try again later",
+                            life: 3000,
+                        },
+                    ]);
+                });
         }
     };
 
