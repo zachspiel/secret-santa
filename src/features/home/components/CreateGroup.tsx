@@ -24,7 +24,7 @@ interface CurrencyOptions {
     value: string;
 }
 
-interface GroupPayload {
+export interface GroupPayload {
     groupName: string;
     date: string;
     currency: string;
@@ -33,6 +33,7 @@ interface GroupPayload {
 
 const CreateGroup = (props: Props): JSX.Element => {
     const members = useAppSelector((state) => state.members.membersList);
+    const selectedForm = useAppSelector((state) => state.app.selectedForm);
     const isSignedIn = useAppSelector((state) => state.app.isUserSignedIn);
     const [showSignIn, setShowSignIn] = React.useState(false);
     const currentYear = new Date().getFullYear();
@@ -92,9 +93,8 @@ const CreateGroup = (props: Props): JSX.Element => {
             const inviteLink = createUrl(
                 members[index],
                 assignedMember,
-                values.currency,
-                values.budget,
-                values.date,
+                values,
+                selectedForm,
             );
             return {
                 ...member,
@@ -104,6 +104,7 @@ const CreateGroup = (props: Props): JSX.Element => {
 
         const group: Group = {
             _id: "",
+            formType: selectedForm,
             createdBy: localStorage.getItem("currentUser") ?? "",
             name: values.groupName,
             members: [..._members],
@@ -127,7 +128,10 @@ const CreateGroup = (props: Props): JSX.Element => {
                 >
                     {(props) => (
                         <form onSubmit={props.handleSubmit}>
-                            <h6>Group name</h6>
+                            <h6>
+                                Group name
+                                <span className="text-danger">*</span>
+                            </h6>
                             <InputText
                                 value={props.values.groupName}
                                 id="groupName"
@@ -135,10 +139,7 @@ const CreateGroup = (props: Props): JSX.Element => {
                                 className="w-100"
                                 onChange={props.handleChange}
                             />
-                            <h6 className="mt-2">
-                                Budget
-                                <span className="text-muted">- optional</span>
-                            </h6>
+                            <h6 className="mt-2">Budget</h6>
                             <div className="d-flex">
                                 <Dropdown
                                     id="currency"
@@ -156,10 +157,7 @@ const CreateGroup = (props: Props): JSX.Element => {
                                     onChange={props.handleChange}
                                 />
                             </div>
-                            <h6 className="mt-2">
-                                Date of gift exchange
-                                <span className="text-muted">- optional</span>
-                            </h6>
+                            <h6 className="mt-2">Date of gift exchange</h6>
                             <Calendar
                                 inputId="date"
                                 dateFormat="yy-mm-dd"

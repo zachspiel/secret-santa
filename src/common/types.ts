@@ -1,18 +1,25 @@
+import { SelectedForm } from "../types/FormTypes";
+
 export interface GroupMember {
+    id: string;
     name: string;
     email: string;
     assignedTo: string;
-    wishlist?: string;
-    inviteLink?: string;
-    notes?: string;
-    favoriteStore?: string;
-    favoriteFood?: string;
-    favoriteColor?: string;
     exclusions: string[];
+    groupId?: string;
+    qAndA?: [
+        {
+            message: string;
+            from: string;
+            sent: string;
+        },
+    ];
+    [key: string]: any;
 }
 
 export interface Group {
     _id: string;
+    formType: SelectedForm;
     createdBy: string;
     name: string;
     members: GroupMember[];

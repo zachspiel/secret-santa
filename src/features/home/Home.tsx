@@ -7,7 +7,8 @@ import { Steps } from "primereact/steps";
 import { Toast, ToastSeverityType } from "primereact/toast";
 import Snowfall from "react-snowfall";
 import Exclusions from "./components/Exclusions";
-import { setCurrentStep } from "../../appSlice";
+import { progressToNextStep, progressToPreviousStep } from "../../appSlice";
+import SelectForm from "./components/SelectForm";
 
 const AddGroupMembers = (): JSX.Element => {
     const members = useAppSelector((state) => state.members.membersList);
@@ -29,6 +30,7 @@ const AddGroupMembers = (): JSX.Element => {
     };
 
     const items = [
+        { label: "Select form" },
         { label: "Enter names" },
         { label: "Set exclusions" },
         { label: "Set gift exchange details" },
@@ -38,7 +40,11 @@ const AddGroupMembers = (): JSX.Element => {
         if (newStep - currentStep > 1) {
             displayToastMessage("Please go to the next step.", "Error", "error");
         } else if ((newStep > 0 && members.length >= 3) || newStep === 0) {
-            dispatch(setCurrentStep(newStep));
+            if (currentStep < newStep) {
+                dispatch(progressToNextStep());
+            } else {
+                dispatch(progressToPreviousStep());
+            }
         } else if (newStep > 0 && members.length < 3) {
             displayToastMessage(
                 "There must be at least three members in a group.",
@@ -69,11 +75,13 @@ const AddGroupMembers = (): JSX.Element => {
                         />
                     </div>
                 </div>
-                {currentStep === 0 && <AddMember />}
+                {currentStep === 0 && <SelectForm />}
 
-                {currentStep === 1 && <Exclusions />}
+                {currentStep === 1 && <AddMember />}
 
-                {currentStep === 2 && <CreateGroup createToast={displayToastMessage} />}
+                {currentStep === 2 && <Exclusions />}
+
+                {currentStep === 3 && <CreateGroup createToast={displayToastMessage} />}
             </div>
             <Toast ref={toast} />
             <Snowfall color="white" />

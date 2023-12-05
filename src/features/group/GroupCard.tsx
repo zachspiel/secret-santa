@@ -103,7 +103,8 @@ const GroupCard = (props: Props): JSX.Element => {
                     label="Re-shuffle list"
                     className="p-button-outlined p-button-sm"
                     onClick={() => {
-                        const { currencySymbol, budget, date } = groupList[index];
+                        const { name, currencySymbol, budget, date, formType } =
+                            groupList[index];
                         const _members = [...groupList[index].members];
                         const names = getListOfNames(_members);
                         let updatedGroup = generateDraw(names, [...names], _members);
@@ -116,9 +117,13 @@ const GroupCard = (props: Props): JSX.Element => {
                             const inviteLink = createUrl(
                                 member,
                                 updatedGroup[assignedToIndex],
-                                currencySymbol,
-                                budget,
-                                date,
+                                {
+                                    groupName: name,
+                                    budget: budget ?? "",
+                                    date: date ?? "",
+                                    currency: currencySymbol ?? "",
+                                },
+                                formType,
                             );
 
                             return { ...member, inviteLink };

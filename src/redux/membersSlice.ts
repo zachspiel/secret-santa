@@ -25,7 +25,7 @@ export const membersSlice = createSlice({
         },
         removeMember: (state, action: PayloadAction<GroupMember>) => {
             state.membersList = state.membersList.filter(
-                (member) => member.name !== action.payload.name,
+                (member) => member.id !== action.payload.id,
             );
         },
         setMembersList: (state, action: PayloadAction<GroupMember[]>) => {
@@ -51,4 +51,5 @@ export const {
     setEditMemberIndex,
     toggleEnableExclusions,
 } = membersSlice.actions;
+
 export default membersSlice.reducer;
