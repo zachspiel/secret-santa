@@ -1,10 +1,21 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { EmailGroupPayload, Group, User } from "../common/types";
+import type { EmailGroupPayload, Group, GroupMember, User } from "../common/types";
+import type { SelectedForm } from "../types/FormTypes";
 
 type Payload = {
     _id: string;
     body: Group | Partial<User>;
 };
+
+interface UpdateMemberPayload {
+    groupId: string;
+    memberId: string;
+    body: {
+        member: GroupMember;
+        formType: SelectedForm;
+        groupId: string;
+    };
+}
 
 type LoginPayload = {
     email: string;
@@ -40,7 +51,7 @@ export const BASE_API_URL = "https://secret-santa-server-zachspiel.vercel.app";
 export const api = createApi({
     reducerPath: "api",
     baseQuery: fetchBaseQuery({
-        baseUrl: `${BASE_API_URL}/api/`,
+        baseUrl: `${import.meta.env.DEV ? "http://localhost:3001" : BASE_API_URL}/api/`,
         prepareHeaders: (headers) => {
             const token = localStorage.getItem("token") || "";
             headers.set("auth-token", token);
@@ -85,6 +96,21 @@ export const api = createApi({
                 method: "DELETE",
             }),
             invalidatesTags: ["GROUPS"],
+        }),
+        getMemberById: builder.query<
+            { member: GroupMember; name: string; formType: string; groupId: string },
+            { memberId: string }
+        >({
+            query: ({ memberId }) => ({
+                url: `group/member/${memberId}`,
+            }),
+        }),
+        updateMemberById: builder.mutation({
+            query: (payload: UpdateMemberPayload) => ({
+                url: `group/${payload.body.groupId}/member/${payload.body.member.id}/update`,
+                method: "POST",
+                body: payload.body,
+            }),
         }),
         loginUser: builder.mutation<Authenticationresponse, LoginPayload>({
             query: (body) => ({
@@ -147,4 +173,6 @@ export const {
     useGetGroupByIdQuery,
     useUpdateUserByIdMutation,
     useSendMessageMutation,
+    useUpdateMemberByIdMutation,
+    useGetMemberByIdQuery,
 } = api;

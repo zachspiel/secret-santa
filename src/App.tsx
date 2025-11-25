@@ -4,6 +4,7 @@ import { Skeleton } from "primereact/skeleton";
 import Home from "./features/home/Home";
 import SelectedPerson from "./features/secretSanta/SecretSanta";
 import SecretSantaMessage from "./features/secretSanta/SecretSantaMessage";
+import EditMemberForm from "./features/member/EditMemberForm";
 
 const Groups = lazy(() => import("./features/group/Groups"));
 
@@ -35,6 +36,7 @@ const App = (): ReactElement => {
                     </Suspense>
                 }
             />
+            <Route path="/memberForm" element={<EditMemberForm />} />
         </Routes>
     );
 };

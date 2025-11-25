@@ -6,8 +6,8 @@ import type { GroupMember } from "../../common/types";
 import { setEditMemberIndex } from "../../redux/membersSlice";
 import { Message } from "primereact/message";
 import { type FieldValues, FormProvider, useForm } from "react-hook-form";
-import { FORM_ONE, FORM_TWO } from "../common/Forms";
 import Field from "../common/Field";
+import { formTypeToForm } from "../../types/FormTypes";
 
 interface Props {
     onSave: (groupMember: GroupMember) => void;
@@ -21,7 +21,7 @@ const EditMember = (props: Props): ReactElement => {
     const [showMessage, setShowMessage] = React.useState(false);
     const dispatch = useAppDispatch();
     const methods = useForm();
-    const form = selectedForm === "form-one" ? FORM_ONE : FORM_TWO;
+    const form = formTypeToForm[selectedForm];
 
     React.useEffect(() => {
         if (editMemberIndex !== -1) {
