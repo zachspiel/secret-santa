@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, type ReactElement } from "react";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { setMembersList } from "../../../redux/membersSlice";
 import type { GroupMember } from "../../../common/types";
@@ -11,14 +11,14 @@ import { FORM_ONE, FORM_TWO } from "../../common/Forms";
 import Field from "../../common/Field";
 import { v4 as uuid } from "uuid";
 
-const AddMember = (): JSX.Element => {
+const AddMember = (): ReactElement => {
     const dispatch = useAppDispatch();
     const members = useAppSelector((state) => state.members.membersList);
     const editMemberIndex = useAppSelector((state) => state.members.editMemberIndex);
     const selectedForm = useAppSelector((state) => state.app.selectedForm);
     const methods = useForm();
-    const onSubmit = (data) => insertMember(data);
-    const [error, setError] = React.useState("");
+    const onSubmit = (data: Record<string, string>) => insertMember(data);
+    const [error, setError] = useState("");
 
     const form = selectedForm === "form-one" ? FORM_ONE : FORM_TWO;
 

@@ -93,6 +93,11 @@ export const api = createApi({
                 body: body,
                 invalidatesTags: ["GROUPS, USER"],
             }),
+            transformResponse: (response: Authenticationresponse) => {
+                localStorage.setItem("token", response.data.token);
+                localStorage.setItem("currentUser", response.data.currentUser);
+                return response;
+            },
         }),
         registerUser: builder.mutation<Authenticationresponse, RegisterPayload>({
             query: (body) => ({
@@ -100,6 +105,11 @@ export const api = createApi({
                 method: "POST",
                 body: body,
             }),
+            transformResponse: (response: Authenticationresponse) => {
+                localStorage.setItem("token", response.data.token);
+                localStorage.setItem("currentUser", response.data.currentUser);
+                return response;
+            },
         }),
         getUserById: builder.query<User, string>({
             query: (id: string) => ({

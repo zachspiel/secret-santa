@@ -1,6 +1,6 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { SelectedForm } from "./types/FormTypes";
+import type { SelectedForm } from "./types/FormTypes";
 
 interface AppSlice {
     isUserSignedIn: boolean;

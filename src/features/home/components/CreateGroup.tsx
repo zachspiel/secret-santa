@@ -1,19 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React from "react";
+import React, { type ReactElement } from "react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import { Group, GroupMember } from "../../../common/types";
+import type { Group, GroupMember } from "../../../common/types";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { createUrl, findIndexById, getAllAvailableCurrency } from "../../../common/util";
+import { createUrl, findByName, getAllAvailableCurrency } from "../../../common/util";
 import { useInsertGroupMutation } from "../../../redux/api";
 import { Dropdown } from "primereact/dropdown";
 import { setMembersList } from "../../../redux/membersSlice";
 import { Calendar } from "primereact/calendar";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import AccountModals from "../../account/AccountModals";
 import { Formik } from "formik";
 import { object, string } from "yup";
-import { ToastSeverityType } from "primereact/toast";
+import type { ToastSeverityType } from "primereact/toast";
 
 interface Props {
     createToast: (message: string, summary: string, severity: ToastSeverityType) => void;
@@ -31,7 +31,7 @@ export interface GroupPayload {
     budget: string;
 }
 
-const CreateGroup = (props: Props): JSX.Element => {
+const CreateGroup = ({ createToast }: Props): ReactElement => {
     const members = useAppSelector((state) => state.members.membersList);
     const selectedForm = useAppSelector((state) => state.app.selectedForm);
     const isSignedIn = useAppSelector((state) => state.app.isUserSignedIn);
@@ -40,7 +40,6 @@ const CreateGroup = (props: Props): JSX.Element => {
     const [saveGroup, { isSuccess, isError }] = useInsertGroupMutation();
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const { createToast } = props;
 
     const initialValues: GroupPayload = {
         groupName: "",
@@ -87,12 +86,11 @@ const CreateGroup = (props: Props): JSX.Element => {
 
     const onSaveGroup = (values: GroupPayload) => {
         const _members: GroupMember[] = members.map((member, index) => {
-            const assignedMemberIndex = findIndexById(members[index].assignedTo, members);
-            const assignedMember = members[assignedMemberIndex];
+            const assignedMember = findByName(members[index].assignedTo, members);
 
             const inviteLink = createUrl(
                 members[index],
-                assignedMember,
+                assignedMember as GroupMember,
                 values,
                 selectedForm,
             );
@@ -121,7 +119,7 @@ const CreateGroup = (props: Props): JSX.Element => {
             >
                 <Formik
                     initialValues={initialValues}
-                    onSubmit={(values, actions) => {
+                    onSubmit={(values) => {
                         isSignedIn ? onSaveGroup(values) : setShowSignIn(true);
                     }}
                     validationSchema={groupValidationSchema}

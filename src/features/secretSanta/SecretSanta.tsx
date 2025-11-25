@@ -1,4 +1,4 @@
-import React from "react";
+import { useRef, useState, type ReactElement } from "react";
 import confettiAnimation from "../../images/confetti.gif";
 import present from "../../images/present-bouncing.gif";
 import reindeer from "../../images/reindeer.gif";
@@ -6,12 +6,10 @@ import santa from "../../images/santa-sled2.gif";
 import { Messages } from "primereact/messages";
 import { useAppQuery } from "../../redux/hooks";
 import Header from "../common/Header";
-import Snowfall from "react-snowfall";
 import { encryptString, getFormattedDate } from "../../common/util";
 import { FORM_ONE, FORM_TWO, FieldType } from "../common/Forms";
-import { SelectedForm } from "../../types/FormTypes";
+import { type SelectedForm } from "../../types/FormTypes";
 import {
-    BASE_API_URL,
     PRODUCTION_URL,
     useGetGroupByIdQuery,
     useSendMessageMutation,
@@ -21,12 +19,12 @@ import { FormProvider, useForm } from "react-hook-form";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 
-const SecretSanta = (): JSX.Element => {
-    const [displayResult, setDisplayResult] = React.useState(false);
-    const [displaySanta, setDisplaySanta] = React.useState(false);
-    const [hasClicked, setHasClicked] = React.useState(false);
-    const message = React.useRef<Messages>(null);
-    const methods = useForm();
+const SecretSanta = (): ReactElement => {
+    const [displayResult, setDisplayResult] = useState(false);
+    const [displaySanta, setDisplaySanta] = useState(false);
+    const [hasClicked, setHasClicked] = useState(false);
+    const message = useRef<Messages>(null);
+    const methods = useForm<{ question: string }>();
 
     const decryptString = (stringToDecript: string | null): string => {
         if (stringToDecript === null) {
@@ -85,7 +83,7 @@ const SecretSanta = (): JSX.Element => {
         }, 1050);
     };
 
-    const createDetailField = (label: string, content: string): JSX.Element => {
+    const createDetailField = (label: string, content: string): ReactElement => {
         return (
             <div className="d-flex flex-column mt-2" key={label}>
                 <p className="text-muted mb-0">{label}</p>
@@ -96,7 +94,7 @@ const SecretSanta = (): JSX.Element => {
         );
     };
 
-    const onSubmit = (data) => sendResponse(data);
+    const onSubmit = (data: { question: string }) => sendResponse(data);
 
     const sendResponse = ({ question }: { question: string }) => {
         const url: URL = new URL(`${PRODUCTION_URL}/secretSantaMessage/`);
@@ -177,67 +175,59 @@ const SecretSanta = (): JSX.Element => {
 
                                 {form
                                     .filter((field) => field.name !== "name")
+                                    .filter((field) => {
+                                        const value = memberData?.[field.name];
+                                        return value && value.length > 0;
+                                    })
                                     .map((field) => {
                                         const value = memberData?.[field.name];
 
-                                        if (value && value.length > 0) {
-                                            if (
-                                                field.fieldType === FieldType.TEXT ||
-                                                field.fieldType === FieldType.TEXT_AREA
-                                            ) {
-                                                return createDetailField(
-                                                    field.label,
-                                                    value,
-                                                );
-                                            }
-
-                                            if (field.fieldType === FieldType.COLOR) {
-                                                return (
+                                        if (
+                                            field.fieldType === FieldType.TEXT ||
+                                            field.fieldType === FieldType.TEXT_AREA
+                                        ) {
+                                            return createDetailField(field.label, value);
+                                        } else if (field.fieldType === FieldType.COLOR) {
+                                            return (
+                                                <div
+                                                    className="d-flex flex-column"
+                                                    key={field.name}
+                                                >
+                                                    <p className="text-muted mb-0">
+                                                        {field.label}
+                                                    </p>
                                                     <div
-                                                        className="d-flex flex-column"
-                                                        key={field.name}
-                                                    >
-                                                        <p className="text-muted mb-0">
-                                                            {field.label}
-                                                        </p>
-                                                        <div
-                                                            className="p-colorpicker-preview mb-2"
-                                                            style={{
-                                                                backgroundColor:
-                                                                    "#" + value,
-                                                                width: "1.5rem",
-                                                                height: "1.5rem",
-                                                            }}
-                                                        />
-                                                    </div>
-                                                );
-                                            }
+                                                        className="p-colorpicker-preview mb-2"
+                                                        style={{
+                                                            backgroundColor: "#" + value,
+                                                            width: "1.5rem",
+                                                            height: "1.5rem",
+                                                        }}
+                                                    />
+                                                </div>
+                                            );
+                                        } else if (field.fieldType === FieldType.URL) {
+                                            const url = decryptUrl(query.get(field.name));
 
-                                            if (field.fieldType === FieldType.URL) {
-                                                const url = decryptUrl(
-                                                    query.get(field.name),
-                                                );
-
-                                                return (
-                                                    <div
-                                                        className="d-flex mt-2"
-                                                        key={field.name}
-                                                    >
-                                                        <i className="pi pi-external-link me-2 mt-1" />
-                                                        <p>
-                                                            {field.label}
-                                                            <b
-                                                                className="text-primary"
-                                                                onClick={() =>
-                                                                    openUrl(url)
-                                                                }
-                                                            >
-                                                                Open URL
-                                                            </b>
-                                                        </p>
-                                                    </div>
-                                                );
-                                            }
+                                            return (
+                                                <div
+                                                    className="d-flex mt-2"
+                                                    key={field.name}
+                                                >
+                                                    <i className="pi pi-external-link me-2 mt-1" />
+                                                    <p>
+                                                        {field.label}
+                                                        <b
+                                                            className="text-primary"
+                                                            onClick={() => openUrl(url)}
+                                                        >
+                                                            Open URL
+                                                        </b>
+                                                    </p>
+                                                </div>
+                                            );
+                                        } else {
+                                            return null;
                                         }
                                     })}
 
@@ -319,7 +309,6 @@ const SecretSanta = (): JSX.Element => {
                     alt="santa"
                 />
             </div>
-            <Snowfall color="white" />
         </div>
     );
 };

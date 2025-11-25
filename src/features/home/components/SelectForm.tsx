@@ -1,13 +1,13 @@
-import React from "react";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { Dropdown } from "primereact/dropdown";
 import { progressToNextStep, setSelectedForm } from "../../../appSlice";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { FORM_ONE, FORM_TWO, FieldInput, FieldType } from "../../common/Forms";
+import { FORM_ONE, FORM_TWO, type FieldInput, FieldType } from "../../common/Forms";
 import { Button } from "primereact/button";
+import type { ReactElement } from "react";
 
-const SelectForm = (): JSX.Element => {
+const SelectForm = (): ReactElement => {
     const dispatch = useAppDispatch();
     const selectedForm = useAppSelector((state) => state.app.selectedForm);
     const form = selectedForm === "form-one" ? FORM_ONE : FORM_TWO;

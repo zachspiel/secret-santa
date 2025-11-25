@@ -1,19 +1,18 @@
-import React from "react";
+import React, { type ReactElement } from "react";
 import { Avatar } from "primereact/avatar";
 import santaImage from "../../images/santa.svg";
 import { useNavigate } from "react-router-dom";
 import { Menu } from "primereact/menu";
 import AccountModals from "../account/AccountModals";
 import { Button } from "primereact/button";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { MenuItem } from "primereact/menuitem";
+import type { MenuItem } from "primereact/menuitem";
 import { useAppDispatch } from "../../redux/hooks";
 import { setGroups } from "../group/groupSlice";
 import { setSignInStatus } from "../../appSlice";
 import { useGetUserByIdQuery } from "../../redux/api";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 
-const Header = (): JSX.Element => {
+const Header = (): ReactElement => {
     const menu = React.useRef<Menu>(null);
     const navigate = useNavigate();
     const [showModal, setShowModal] = React.useState(false);

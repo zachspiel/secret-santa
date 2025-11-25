@@ -1,5 +1,5 @@
-import React from "react";
 import { InputText } from "primereact/inputtext";
+import type { ReactElement } from "react";
 import { useFormContext } from "react-hook-form";
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
     isRequired?: boolean;
 }
 
-const TextInput = ({ name, label, isRequired }: Props): JSX.Element => {
+const TextInput = ({ name, label, isRequired }: Props): ReactElement => {
     const { register, formState } = useFormContext();
     const isTouched = formState.touchedFields[name];
     const isInvalid = formState.errors[name] && isTouched;

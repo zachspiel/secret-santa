@@ -1,4 +1,3 @@
-import React from "react";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import {
     removeMember,
@@ -7,8 +6,9 @@ import {
 } from "../../../redux/membersSlice";
 import { ScrollPanel } from "primereact/scrollpanel";
 import { Button } from "primereact/button";
+import type { ReactElement } from "react";
 
-const MembersList = (): JSX.Element => {
+const MembersList = (): ReactElement => {
     const members = useAppSelector((state) => state.members.membersList);
     const dispatch = useAppDispatch();
     const panelClass = members.length > 0 ? "border mb-2" : "mb-2";

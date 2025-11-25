@@ -1,16 +1,16 @@
-import React from "react";
 import { MultiSelect } from "primereact/multiselect";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { InputSwitch } from "primereact/inputswitch";
 import { setMembersList, toggleEnableExclusions } from "../../../redux/membersSlice";
-import { GroupMember } from "../../../common/types";
+import type { GroupMember } from "../../../common/types";
 import { Button } from "primereact/button";
 import { progressToNextStep, progressToPreviousStep } from "../../../appSlice";
-import { getListOfNames, generateDraw } from "../../../common/util";
+import { getListOfNames, generateDraw, findMemberIndex } from "../../../common/util";
 import { Message } from "primereact/message";
 import { ScrollPanel } from "primereact/scrollpanel";
+import type { ReactElement } from "react";
 
-const Exclusions = (): JSX.Element => {
+const Exclusions = (): ReactElement => {
     const members = useAppSelector((state) => state.members.membersList);
     const enableExclusions = useAppSelector((state) => state.members.enableExclusions);
     const dispatch = useAppDispatch();
@@ -28,8 +28,9 @@ const Exclusions = (): JSX.Element => {
         <div className="justify-content-center text-start mb-3 p-3">
             <div className="w-100 text-center">
                 <p>
-                    An exclusion indicates who may <b>not</b> draw whom
+                    An exclusion indicates who may <strong>not</strong> draw whom
                 </p>
+
                 {members.length >= 6 && (
                     <div className="d-flex justify-content-center mb-3">
                         <p className="mb-0 me-2">Enable Exclusions</p>
@@ -43,6 +44,14 @@ const Exclusions = (): JSX.Element => {
                     <Message
                         severity="info"
                         text="Your group is too small for exclusions. There must be at least 6 people in your group."
+                    />
+                )}
+
+                {enableExclusions && members.length >= 6 && (
+                    <Message
+                        className="mb-2"
+                        severity="info"
+                        text={`You may select up to ${members.length - 3} names each`}
                     />
                 )}
             </div>
@@ -75,6 +84,35 @@ const Exclusions = (): JSX.Element => {
                                             ...members[index],
                                             exclusions: e.value,
                                         };
+
+                                        const newName = e.value.find(
+                                            (name: string) =>
+                                                !members[index].exclusions.includes(name),
+                                        );
+
+                                        if (newName) {
+                                            //  Add current members name to excluded member's list as well
+                                            const excludedMemberIndex = findMemberIndex(
+                                                newName,
+                                                members,
+                                            );
+                                            const excludedMember =
+                                                _members[excludedMemberIndex];
+
+                                            if (
+                                                !excludedMember.exclusions.includes(
+                                                    _members[index].name,
+                                                )
+                                            ) {
+                                                _members[excludedMemberIndex] = {
+                                                    ...excludedMember,
+                                                    exclusions: [
+                                                        ...excludedMember.exclusions,
+                                                        _members[index].name,
+                                                    ],
+                                                };
+                                            }
+                                        }
 
                                         dispatch(setMembersList(_members));
                                     }}

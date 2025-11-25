@@ -1,9 +1,9 @@
-import React from "react";
 import { useFormContext } from "react-hook-form";
-import { FieldInput } from "../features/common/Forms";
+import type { FieldInput } from "../features/common/Forms";
 import { InputTextarea } from "primereact/inputtextarea";
+import type { ReactElement } from "react";
 
-const TextAreaInput = ({ name, label, isRequired }: FieldInput): JSX.Element => {
+const TextAreaInput = ({ name, label, isRequired }: FieldInput): ReactElement => {
     const { register } = useFormContext();
 
     return (

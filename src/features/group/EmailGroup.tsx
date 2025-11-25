@@ -2,8 +2,8 @@ import { Formik } from "formik";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
-import React from "react";
-import { EmailGroupPayload, GroupMember } from "../../common/types";
+import React, { useEffect, useRef, useState, type ReactElement } from "react";
+import type { EmailGroupPayload, GroupMember } from "../../common/types";
 import { object, string } from "yup";
 import ReactQuill from "react-quill";
 import { useEmailGroupsMutation } from "../../redux/api";
@@ -18,12 +18,12 @@ const validationSchema = object().shape({
     message: string().trim().required("Message is required."),
 });
 
-const EmailGroup = (props: Props): JSX.Element => {
-    const [isVisible, setIsVisible] = React.useState(false);
+const EmailGroup = (props: Props): ReactElement => {
+    const [isVisible, setIsVisible] = useState(false);
     const [emailGroup, { isSuccess, isError }] = useEmailGroupsMutation();
-    const messages = React.useRef<Messages>(null);
+    const messages = useRef<Messages>(null);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (isSuccess) {
             messages?.current?.show({
                 severity: "success",

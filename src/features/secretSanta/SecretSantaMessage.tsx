@@ -1,24 +1,23 @@
-import Snowfall from "react-snowfall";
 import Header from "../common/Header";
 import { useAppQuery } from "../../redux/hooks";
 import { InputText } from "primereact/inputtext";
 import { FormProvider, useForm } from "react-hook-form";
 import { Button } from "primereact/button";
 import { PRODUCTION_URL, useSendMessageMutation } from "../../redux/api";
-import React from "react";
+import { useRef, type ReactElement } from "react";
 import { encryptString } from "../../common/util";
-import { Messages } from "primereact";
+import { Messages } from "primereact/messages";
 
-const SecretSantaMessage = (): JSX.Element => {
-    const methods = useForm();
+const SecretSantaMessage = (): ReactElement => {
+    const methods = useForm<{ response: string }>();
     const query = useAppQuery();
     const message = atob(query.get("message") ?? "");
     const email = atob(query.get("email") ?? "");
     const type = query.get("type");
     const [sendMessage] = useSendMessageMutation();
-    const messageRef = React.useRef<Messages>(null);
+    const messageRef = useRef<Messages>(null);
 
-    const onSubmit = (data) => sendResponse(data);
+    const onSubmit = (data: { response: string }) => sendResponse(data);
 
     const sendResponse = ({ response }: { response: string }) => {
         const url: URL = new URL(`${PRODUCTION_URL}/secretSantaMessage/`);
@@ -123,8 +122,6 @@ const SecretSantaMessage = (): JSX.Element => {
                     </div>
                 </div>
             </div>
-
-            <Snowfall color="white" />
         </div>
     );
 };

@@ -1,16 +1,16 @@
-import React from "react";
+import React, { type ReactElement } from "react";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { InputSwitch } from "primereact/inputswitch";
 import { ScrollPanel } from "primereact/scrollpanel";
 import { Toast } from "primereact/toast";
-import { Group } from "../../common/types";
+import type { Group, GroupMember } from "../../common/types";
 import {
     getListOfNames,
     generateDraw,
     getFormattedDate,
     createUrl,
-    findIndexById,
+    findByName,
 } from "../../common/util";
 import { useUpdateGroupByIdMutation } from "../../redux/api";
 import copy from "copy-to-clipboard";
@@ -26,16 +26,15 @@ interface Props {
     onDeleteGroup: (index: number) => void;
 }
 
-const GroupCard = (props: Props): JSX.Element => {
-    const {
-        group,
-        groupList,
-        index,
-        displaySecretSantas,
-        setDisplaySecretSantas,
-        toast,
-    } = props;
-
+const GroupCard = ({
+    group,
+    groupList,
+    index,
+    displaySecretSantas,
+    setDisplaySecretSantas,
+    onDeleteGroup,
+    toast,
+}: Props): ReactElement => {
     const [updateGroup, { isSuccess: groupUpdatedSuccessfully }] =
         useUpdateGroupByIdMutation();
 
@@ -97,7 +96,7 @@ const GroupCard = (props: Props): JSX.Element => {
                 <Button
                     label="Delete"
                     className="p-button-outlined p-button-danger p-button-sm me-2"
-                    onClick={() => props.onDeleteGroup(index)}
+                    onClick={() => onDeleteGroup(index)}
                 />
                 <Button
                     label="Re-shuffle list"
@@ -110,13 +109,12 @@ const GroupCard = (props: Props): JSX.Element => {
                         let updatedGroup = generateDraw(names, [...names], _members);
 
                         updatedGroup = updatedGroup.map((member) => {
-                            const assignedToIndex = findIndexById(
-                                member.assignedTo,
-                                updatedGroup,
-                            );
                             const inviteLink = createUrl(
                                 member,
-                                updatedGroup[assignedToIndex],
+                                findByName(
+                                    member.assignedTo,
+                                    updatedGroup,
+                                ) as GroupMember,
                                 {
                                     groupName: name,
                                     budget: budget ?? "",
@@ -173,7 +171,7 @@ const GroupCard = (props: Props): JSX.Element => {
                                     className="p-button-text"
                                     onClick={() => {
                                         copy(member.inviteLink ?? "");
-                                        props.toast.current?.show({
+                                        toast.current?.show({
                                             severity: "success",
                                             summary: "Success",
                                             detail: "Invite sucessfully copied.",

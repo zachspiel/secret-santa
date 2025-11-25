@@ -1,19 +1,18 @@
-import React from "react";
+import { useRef, type ReactElement } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import Header from "../common/Header";
 import AddMember from "./components/AddMember";
 import CreateGroup from "./components/CreateGroup";
 import { Steps } from "primereact/steps";
-import { Toast, ToastSeverityType } from "primereact/toast";
-import Snowfall from "react-snowfall";
+import { Toast, type ToastSeverityType } from "primereact/toast";
 import Exclusions from "./components/Exclusions";
 import { progressToNextStep, progressToPreviousStep } from "../../appSlice";
 import SelectForm from "./components/SelectForm";
 
-const AddGroupMembers = (): JSX.Element => {
+const AddGroupMembers = (): ReactElement => {
     const members = useAppSelector((state) => state.members.membersList);
     const currentStep = useAppSelector((state) => state.app.currentStep);
-    const toast = React.useRef<Toast>(null);
+    const toast = useRef<Toast>(null);
     const dispatch = useAppDispatch();
 
     const displayToastMessage = (
@@ -84,7 +83,6 @@ const AddGroupMembers = (): JSX.Element => {
                 {currentStep === 3 && <CreateGroup createToast={displayToastMessage} />}
             </div>
             <Toast ref={toast} />
-            <Snowfall color="white" />
         </div>
     );
 };

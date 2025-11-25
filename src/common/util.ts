@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { GroupPayload } from "../features/home/components/CreateGroup";
-import { SelectedForm } from "../types/FormTypes";
+import type { GroupPayload } from "../features/home/components/CreateGroup";
+import type { SelectedForm } from "../types/FormTypes";
 import type { GroupMember } from "./types";
 
 const getListOfNames = (members: GroupMember[]): string[] => {
-    return members.reduce((acc: string[], member) => [...acc, member.name], []);
+    return members.map((member) => member.name);
 };
 
 const remove = (name: string, list: string[]) => list.filter((i) => i !== name);
@@ -24,18 +24,18 @@ const generateDraw = (
         );
 
         if (currentMember !== undefined) {
-            const hasExclusions = currentMember.exclusions;
-            const assignedTo = pickAName(name, listRemaining, hasExclusions);
+            const assignedTo = pickAName(name, listRemaining, currentMember.exclusions);
             listRemaining = remove(assignedTo, listRemaining);
             return [...acc, { ...currentMember, name, assignedTo }];
         }
-        return [...acc];
+        return acc;
     }, []);
 
+    // If some members in group were not assigned a name, try again
     if (result.some(({ assignedTo }) => !assignedTo)) {
         return generateDraw(
             namesInHat,
-            Object.assign([], namesInHat),
+            namesInHat,
             secretSantaGroupMembersInfo,
             retry + 1,
         );
@@ -50,29 +50,21 @@ const pickAName = (
 ): string => {
     const filteredList = remove(memberName, namesList);
 
-    let filteredListIncExclusions;
     if (exclusions && exclusions.length) {
-        filteredListIncExclusions = filteredList.filter(
-            (name) => !exclusions.includes(name),
-        );
+        return getRandomName(filteredList.filter((name) => !exclusions.includes(name)));
     }
 
-    return exclusions && exclusions.length
-        ? getRandomName(filteredListIncExclusions ?? [])
-        : getRandomName(filteredList);
+    return getRandomName(filteredList);
 };
 
 const getRandomName = (list: string[]) => list[Math.floor(Math.random() * list.length)];
 
-const findIndexById = (name: string, members: GroupMember[]): number => {
-    const NOT_FOUND = -1;
-    for (let index = 0; index < members.length; index++) {
-        if (members[index].name === name) {
-            return index;
-        }
-    }
+const findByName = (name: string, members: GroupMember[]): GroupMember | undefined => {
+    return members.find((member) => member.name === name);
+};
 
-    return NOT_FOUND;
+const findMemberIndex = (name: string, members: GroupMember[]): number => {
+    return members.findIndex((member) => member.name === name);
 };
 
 const createUrl = (
@@ -178,7 +170,8 @@ const getAllAvailableCurrency = (): string[] => [
 
 export {
     getListOfNames,
-    findIndexById,
+    findByName,
+    findMemberIndex,
     createUrl,
     generateDraw,
     getFormattedDate,

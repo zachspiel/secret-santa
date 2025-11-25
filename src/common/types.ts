@@ -1,4 +1,4 @@
-import { SelectedForm } from "../types/FormTypes";
+import type { SelectedForm } from "../types/FormTypes";
 
 export interface GroupMember {
     id: string;

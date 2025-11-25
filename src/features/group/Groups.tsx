@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useRef, useState, type ReactElement } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { Card } from "primereact/card";
 import { useNavigate } from "react-router-dom";
@@ -8,19 +8,18 @@ import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { useDeleteGroupByIdMutation, useGetAllGroupsQuery } from "../../redux/api";
 import { setGroups } from "./groupSlice";
-import Snowfall from "react-snowfall";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import groupImage from "../../images/undraw_Having_fun_re_vj4h.png";
 import { Skeleton } from "primereact/skeleton";
 import GroupCard from "./GroupCard";
 
-const Groups = (): JSX.Element => {
+const Groups = (): ReactElement => {
     const groups = useAppSelector((state) => state.groups.groups);
     const isUserSignedIn = useAppSelector((state) => state.app.isUserSignedIn);
-    const [deleteGroupIndex, setDeleteGroupIndex] = React.useState(-1);
-    const [showConfirmDelete, setShowConfirmDelete] = React.useState(false);
-    const [displaySecretSantas, setDisplaySecretSantas] = React.useState<number[]>([]);
-    const toast = React.useRef<Toast>(null);
+    const [deleteGroupIndex, setDeleteGroupIndex] = useState(-1);
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+    const [displaySecretSantas, setDisplaySecretSantas] = useState<number[]>([]);
+    const toast = useRef<Toast>(null);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { data, isLoading } = useGetAllGroupsQuery(
@@ -28,13 +27,13 @@ const Groups = (): JSX.Element => {
     );
     const [deleteGroup, { isSuccess, isError }] = useDeleteGroupByIdMutation();
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (data !== undefined) {
             dispatch(setGroups(data));
         }
     }, [dispatch, data]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (isError) {
             toast.current?.show({
                 severity: "error",
@@ -45,7 +44,7 @@ const Groups = (): JSX.Element => {
         }
     }, [isError]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (isSuccess) {
             toast.current?.show({
                 severity: "success",
@@ -128,8 +127,6 @@ const Groups = (): JSX.Element => {
             />
 
             <Toast ref={toast} />
-
-            <Snowfall color="white" />
         </div>
     );
 };
