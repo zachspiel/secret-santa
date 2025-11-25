@@ -6,9 +6,15 @@ interface Props {
     name: string;
     label: string;
     isRequired?: boolean;
+    readonly?: boolean;
 }
 
-const TextInput = ({ name, label, isRequired }: Props): ReactElement => {
+const TextInput = ({
+    name,
+    label,
+    isRequired,
+    readonly = false,
+}: Props): ReactElement => {
     const { register, formState } = useFormContext();
     const isTouched = formState.touchedFields[name];
     const isInvalid = formState.errors[name] && isTouched;
@@ -23,6 +29,7 @@ const TextInput = ({ name, label, isRequired }: Props): ReactElement => {
                 placeholder={`Enter ${label.toLocaleLowerCase()}`}
                 className={`w-100 ${isInvalid ? "p-invalid" : ""}`}
                 {...register(name, { required: isRequired ?? false })}
+                disabled={readonly}
             />
             {isInvalid && (
                 <small id={`${name}-help`} className="p-error block">

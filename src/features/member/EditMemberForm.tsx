@@ -1,6 +1,10 @@
 import { useEffect, type ReactElement } from "react";
 import { useAppQuery } from "../../redux/hooks";
-import { useGetMemberByIdQuery, useUpdateMemberByIdMutation } from "../../redux/api";
+import {
+    useGetGroupByIdQuery,
+    useGetMemberByIdQuery,
+    useUpdateMemberByIdMutation,
+} from "../../redux/api";
 import Header from "../common/Header";
 import { Message } from "primereact/message";
 import { formTypeToForm, type SelectedForm } from "../../types/FormTypes";
@@ -24,7 +28,13 @@ const EditMemberForm = (): ReactElement => {
         { skip: !memberId || !groupId },
     );
 
-    const [updateMember, { isSuccess, isError }] = useUpdateMemberByIdMutation();
+    const { data: group } = useGetGroupByIdQuery(groupId || "", { skip: !groupId });
+    const secretSanta = group?.members.find(
+        (member) => member.assignedTo === data?.member?.name,
+    );
+
+    const [updateMember, { isSuccess, isError, isLoading }] =
+        useUpdateMemberByIdMutation();
 
     useEffect(() => {
         if (data) {
@@ -34,16 +44,12 @@ const EditMemberForm = (): ReactElement => {
 
     const onSubmit = (values: GroupMember) => {
         if (groupId && memberId && formType) {
-            console.log(values);
-
             updateMember({
+                member: values,
                 groupId,
-                memberId,
-                body: {
-                    member: values,
-                    groupId,
-                    formType,
-                },
+                formType,
+                inviteLink: secretSanta?.inviteLink ?? "",
+                email: secretSanta?.email ?? "",
             });
         }
     };
@@ -78,7 +84,7 @@ const EditMemberForm = (): ReactElement => {
         <div className="container-fluid ">
             <Header />
             <div
-                className="col-md-8 col-sm-12 mb-5 p-3 main-content"
+                className="col-md-6 col-sm-12 mb-5 p-3 main-content"
                 style={{
                     backgroundColor: "white",
                     marginLeft: "auto",
@@ -106,10 +112,14 @@ const EditMemberForm = (): ReactElement => {
                 <FormProvider {...methods}>
                     <form onSubmit={methods.handleSubmit(onSubmit)} id="add-member-form">
                         {form.map((field) => (
-                            <Field {...field} key={field.name} />
+                            <Field
+                                {...field}
+                                key={field.name}
+                                readonly={["name", "email"].includes(field.name)}
+                            />
                         ))}
                         <div className="d-flex justify-content-end">
-                            <Button label="Save" type="submit" />
+                            <Button label="Save" type="submit" loading={isLoading} />
                         </div>
                     </form>
                 </FormProvider>

@@ -3,7 +3,11 @@ import { useAppQuery } from "../../redux/hooks";
 import { InputText } from "primereact/inputtext";
 import { FormProvider, useForm } from "react-hook-form";
 import { Button } from "primereact/button";
-import { PRODUCTION_URL, useSendMessageMutation } from "../../redux/api";
+import {
+    PRODUCTION_URL,
+    useGetGroupByIdQuery,
+    useSendMessageMutation,
+} from "../../redux/api";
 import { useRef, type ReactElement } from "react";
 import { encryptString } from "../../common/util";
 import { Messages } from "primereact/messages";
@@ -14,8 +18,18 @@ const SecretSantaMessage = (): ReactElement => {
     const message = atob(query.get("message") ?? "");
     const email = atob(query.get("email") ?? "");
     const type = query.get("type");
-    const [sendMessage] = useSendMessageMutation();
+    const questionId = query.get("id") ?? "";
+    const memberId = query.get("memberId");
+    const groupId = query.get("groupId");
+    const [sendMessage, { isLoading }] = useSendMessageMutation();
     const messageRef = useRef<Messages>(null);
+    const { data: group } = useGetGroupByIdQuery(groupId || "", {
+        skip: groupId === null,
+    });
+    const member = group?.members?.find((member) => member.id === memberId);
+    const assignee = group?.members?.find(
+        (groupMember) => groupMember.name === member?.assignedTo,
+    );
 
     const onSubmit = (data: { response: string }) => sendResponse(data);
 
@@ -24,14 +38,25 @@ const SecretSantaMessage = (): ReactElement => {
         url.searchParams.append("type", "recieved-response");
         url.searchParams.append("message", encryptString(response));
         url.searchParams.append("email", encryptString(query.get("email") ?? ""));
+        url.searchParams.append("memberId", memberId ?? "");
+        url.searchParams.append("groupId", groupId ?? "");
 
         if (email) {
             sendMessage({
                 message: response,
                 email: email,
-                subject: "You recieved a response from your Secret Santa!",
+                memberId: memberId ?? "",
+                groupId: groupId ?? "",
+                subject: `You recieved a response from ${
+                    assignee?.name ?? " your secret santa assignee"
+                }`,
                 url: url.toString(),
                 type: "answer",
+                question: {
+                    id: questionId,
+                    question: message,
+                    answer: response,
+                },
             })
                 .then(() => {
                     messageRef?.current?.show([
@@ -70,8 +95,7 @@ const SecretSantaMessage = (): ReactElement => {
                         {type === "send-response" && (
                             <>
                                 <p>
-                                    You have received a question from your assigned
-                                    person!
+                                    You have received a question from your Secret Santa!
                                 </p>
 
                                 <div
@@ -94,9 +118,7 @@ const SecretSantaMessage = (): ReactElement => {
                                         <Button
                                             type="submit"
                                             className="mt-2"
-                                            disabled={
-                                                methods.getFieldState("response").invalid
-                                            }
+                                            loading={isLoading}
                                         >
                                             Send
                                         </Button>
@@ -108,7 +130,8 @@ const SecretSantaMessage = (): ReactElement => {
                         {type === "recieved-response" && (
                             <>
                                 <p>
-                                    You have received a response from your Secret Santa!
+                                    You have received a response from{" "}
+                                    <strong>{assignee?.name}</strong>!
                                 </p>
 
                                 <div
@@ -117,6 +140,10 @@ const SecretSantaMessage = (): ReactElement => {
                                 >
                                     {message}
                                 </div>
+
+                                <a href={member?.inviteLink ?? ""} className="mt-2">
+                                    View {assignee?.name}'s information
+                                </a>
                             </>
                         )}
                     </div>

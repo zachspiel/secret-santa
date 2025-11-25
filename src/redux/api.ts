@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { EmailGroupPayload, Group, GroupMember, User } from "../common/types";
+import type { EmailGroupPayload, Group, GroupMember, QAndA, User } from "../common/types";
 import type { SelectedForm } from "../types/FormTypes";
 
 type Payload = {
@@ -8,13 +8,11 @@ type Payload = {
 };
 
 interface UpdateMemberPayload {
+    member: GroupMember;
+    formType: SelectedForm;
     groupId: string;
-    memberId: string;
-    body: {
-        member: GroupMember;
-        formType: SelectedForm;
-        groupId: string;
-    };
+    inviteLink: string;
+    email: string;
 }
 
 type LoginPayload = {
@@ -42,6 +40,9 @@ export interface SendMessagePayload {
     message: string;
     email: string;
     url: string;
+    question: QAndA;
+    memberId: string;
+    groupId: string;
     type: "question" | "answer";
 }
 
@@ -51,7 +52,7 @@ export const BASE_API_URL = "https://secret-santa-server-zachspiel.vercel.app";
 export const api = createApi({
     reducerPath: "api",
     baseQuery: fetchBaseQuery({
-        baseUrl: `${import.meta.env.DEV ? "http://localhost:3001" : BASE_API_URL}/api/`,
+        baseUrl: `${BASE_API_URL}/api/`,
         prepareHeaders: (headers) => {
             const token = localStorage.getItem("token") || "";
             headers.set("auth-token", token);
@@ -107,9 +108,9 @@ export const api = createApi({
         }),
         updateMemberById: builder.mutation({
             query: (payload: UpdateMemberPayload) => ({
-                url: `group/${payload.body.groupId}/member/${payload.body.member.id}/update`,
+                url: `group/${payload.groupId}/member/${payload.member.id}/update`,
                 method: "POST",
-                body: payload.body,
+                body: payload,
             }),
         }),
         loginUser: builder.mutation<Authenticationresponse, LoginPayload>({

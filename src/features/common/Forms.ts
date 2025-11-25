@@ -11,6 +11,7 @@ interface Field {
     name: string;
     isRequired?: boolean;
     fieldType: FieldType;
+    readonly?: boolean;
 }
 
 export interface TextField extends Field {

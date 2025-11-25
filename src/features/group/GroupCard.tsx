@@ -12,7 +12,7 @@ import {
     createUrl,
     findByName,
 } from "../../common/util";
-import { useUpdateGroupByIdMutation } from "../../redux/api";
+import { PRODUCTION_URL, useUpdateGroupByIdMutation } from "../../redux/api";
 import copy from "copy-to-clipboard";
 import EmailGroup from "./EmailGroup";
 
@@ -92,7 +92,7 @@ const GroupCard = ({
     const Footer = (index: number) => {
         return (
             <div className="d-flex justify-content-md-end justify-content-sm-center p-2">
-                <EmailGroup members={groupList[index].members} />
+                <EmailGroup group={groupList[index]} />
                 <Button
                     label="Delete"
                     className="p-button-outlined p-button-danger p-button-sm me-2"
@@ -148,6 +148,7 @@ const GroupCard = ({
                     <p>Name</p>
                     <p>Assigned to</p>
                     <p>Invite link</p>
+                    <p>Edit link</p>
                 </div>
                 <ScrollPanel
                     style={{ width: "100%", height: "280px" }}
@@ -171,6 +172,22 @@ const GroupCard = ({
                                     className="p-button-text"
                                     onClick={() => {
                                         copy(member.inviteLink ?? "");
+                                        toast.current?.show({
+                                            severity: "success",
+                                            summary: "Success",
+                                            detail: "Invite sucessfully copied.",
+                                            life: 3000,
+                                        });
+                                    }}
+                                />
+
+                                <Button
+                                    label="Copy edit link"
+                                    className="p-button-text"
+                                    onClick={() => {
+                                        copy(
+                                            `${PRODUCTION_URL}/memberForm?memberId=${member.id}&groupId=${member.groupId}&formType=${group.formType}`,
+                                        );
                                         toast.current?.show({
                                             severity: "success",
                                             summary: "Success",

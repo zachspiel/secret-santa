@@ -3,14 +3,14 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import React, { useEffect, useRef, useState, type ReactElement } from "react";
-import type { EmailGroupPayload, GroupMember } from "../../common/types";
+import type { EmailGroupPayload, Group } from "../../common/types";
 import { object, string } from "yup";
 import ReactQuill from "react-quill";
 import { useEmailGroupsMutation } from "../../redux/api";
 import { Messages } from "primereact/messages";
 
 interface Props {
-    members: GroupMember[];
+    group: Group;
 }
 
 const validationSchema = object().shape({
@@ -18,7 +18,7 @@ const validationSchema = object().shape({
     message: string().trim().required("Message is required."),
 });
 
-const EmailGroup = (props: Props): ReactElement => {
+const EmailGroup = ({ group }: Props): ReactElement => {
     const [isVisible, setIsVisible] = useState(false);
     const [emailGroup, { isSuccess, isError }] = useEmailGroupsMutation();
     const messages = useRef<Messages>(null);
@@ -46,7 +46,9 @@ const EmailGroup = (props: Props): ReactElement => {
     const initialValues: EmailGroupPayload = {
         subject: "Ho Ho Ho! Santa is coming to town!",
         message: "I have included the link for your secret santa assignment!",
-        members: props.members,
+        groupId: group._id,
+        members: group.members,
+        formType: group.formType,
     };
 
     return (

@@ -7,14 +7,14 @@ export interface GroupMember {
     assignedTo: string;
     exclusions: string[];
     groupId?: string;
-    qAndA?: [
-        {
-            message: string;
-            from: string;
-            sent: string;
-        },
-    ];
+    qAndA?: QAndA[];
     [key: string]: any;
+}
+
+export interface QAndA {
+    id: string;
+    question: string;
+    answer: string;
 }
 
 export interface Group {
@@ -26,6 +26,7 @@ export interface Group {
     currencySymbol?: string;
     budget?: string;
     date?: string;
+    inviteLink?: string;
 }
 
 export interface GroupFormValues {
@@ -62,6 +63,8 @@ export interface EmailGroupPayload {
     subject: string;
     message: string;
     members: GroupMember[];
+    groupId: string;
+    formType: SelectedForm;
 }
 
 export type ModalTypes = "LOGIN_MODAL" | "REGISTER_MODAL";
