@@ -47,7 +47,7 @@ export interface SendMessagePayload {
 }
 
 export const PRODUCTION_URL = "https://spiel-secret-santa.vercel.app";
-export const BASE_API_URL = "https://secret-santa-server-zachspiel.vercel.app";
+export const BASE_API_URL = "https://secret-santa-server.vercel.app";
 
 export const api = createApi({
     reducerPath: "api",

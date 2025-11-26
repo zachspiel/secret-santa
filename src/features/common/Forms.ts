@@ -144,7 +144,7 @@ export const FORM_THREE: FieldInput[] = [
     ...BASE_FORM,
     {
         name: "wishlist",
-        label: "Wishlist",
+        label: "Wishlist URL",
         fieldType: FieldType.URL,
     },
     {

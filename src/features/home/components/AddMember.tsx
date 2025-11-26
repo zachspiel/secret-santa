@@ -7,9 +7,9 @@ import { progressToNextStep } from "../../../appSlice";
 import EditMember from "../../group/EditMember";
 import MembersList from "./MembersList";
 import { FormProvider, useForm } from "react-hook-form";
-import { FORM_ONE, FORM_TWO } from "../../common/Forms";
 import Field from "../../common/Field";
 import { v4 as uuid } from "uuid";
+import { formTypeToForm } from "../../../types/FormTypes";
 
 const AddMember = (): ReactElement => {
     const dispatch = useAppDispatch();
@@ -20,7 +20,7 @@ const AddMember = (): ReactElement => {
     const onSubmit = (data: Record<string, string>) => insertMember(data);
     const [error, setError] = useState("");
 
-    const form = selectedForm === "form-one" ? FORM_ONE : FORM_TWO;
+    const form = formTypeToForm[selectedForm];
 
     const insertMember = (fields: Record<string, string>) => {
         const member: GroupMember = {

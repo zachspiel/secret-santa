@@ -46,14 +46,6 @@ const SecretSanta = (): ReactElement => {
 
     const [sendMessage, { isLoading }] = useSendMessageMutation();
 
-    const decryptUrl = (wishlist: string | null): string => {
-        if (wishlist === null || wishlist.length === 0) {
-            return "";
-        }
-
-        return atob(wishlist);
-    };
-
     const playPresentAnimation = () => {
         setHasClicked(true);
         setTimeout(() => {
@@ -195,15 +187,13 @@ const SecretSanta = (): ReactElement => {
                                                 </div>
                                             );
                                         } else if (field.fieldType === FieldType.URL) {
-                                            const url = decryptUrl(query.get(field.name));
-
                                             return (
                                                 <div className="mt-2" key={field.name}>
                                                     <p>{field.label}</p>
                                                     <div className="d-flex align-items-center">
                                                         <i className="pi pi-external-link me-2" />
 
-                                                        <a href={url} target="_blank">
+                                                        <a href={value} target="_blank">
                                                             <b>Open URL</b>
                                                         </a>
                                                     </div>
@@ -251,7 +241,7 @@ const SecretSanta = (): ReactElement => {
 
                         {displayResult && (
                             <div>
-                                <div className="text-center">
+                                <div>
                                     <p>
                                         Have a question for{" "}
                                         <strong>{assignedMember?.name}</strong>? Send them
