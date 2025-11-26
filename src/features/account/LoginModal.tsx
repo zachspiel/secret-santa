@@ -1,12 +1,12 @@
-import React from "react";
+import { useEffect, type ReactElement } from "react";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Dialog } from "primereact/dialog";
-import { LoginPayload } from "../../common/types";
+import type { LoginPayload } from "../../common/types";
 import { useLoginUserMutation } from "../../redux/api";
 import { useAppDispatch } from "../../redux/hooks";
 import { setSignInStatus } from "../../appSlice";
-import { FormikProps, FormikTouched, FormikErrors, Formik } from "formik";
+import { type FormikProps, type FormikTouched, type FormikErrors, Formik } from "formik";
 import { Button } from "primereact/button";
 import { object, string } from "yup";
 
@@ -34,15 +34,12 @@ type FormProps = FormikProps<LoginPayload>;
 type Touched = FormikTouched<LoginPayload>;
 type Errors = FormikErrors<LoginPayload>;
 
-const LoginModal = (props: Props): JSX.Element => {
+const LoginModal = ({ isVisible, renderRegisterModal, onHide }: Props): ReactElement => {
     const dispatch = useAppDispatch();
     const [loginUser, { isError, data }] = useLoginUserMutation();
-    const { isVisible, renderRegisterModal, onHide } = props;
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!isError && data?.data !== undefined) {
-            localStorage.setItem("token", data.data.token);
-            localStorage.setItem("currentUser", data.data.currentUser);
             dispatch(setSignInStatus(true));
             onHide();
         }
@@ -114,7 +111,7 @@ const LoginModal = (props: Props): JSX.Element => {
             <div className="p-grid p-fluid col">
                 <Formik
                     initialValues={initialValues}
-                    onSubmit={(values, actions) => {
+                    onSubmit={(values) => {
                         loginUser(values);
                     }}
                     validationSchema={loginValidationSchema}
@@ -138,7 +135,7 @@ const LoginModal = (props: Props): JSX.Element => {
                         {`Don't have an account? Click`}
                         <span
                             className="text-primary register-link"
-                            onClick={() => renderRegisterModal()}
+                            onClick={renderRegisterModal}
                         >
                             {` here `}
                         </span>

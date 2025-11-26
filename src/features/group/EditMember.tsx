@@ -1,19 +1,19 @@
-import React from "react";
+import React, { type ReactElement } from "react";
 import { Dialog } from "primereact/dialog";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { Button } from "primereact/button";
-import { GroupMember } from "../../common/types";
+import type { GroupMember } from "../../common/types";
 import { setEditMemberIndex } from "../../redux/membersSlice";
 import { Message } from "primereact/message";
-import { FormProvider, useForm } from "react-hook-form";
-import { FORM_ONE, FORM_TWO } from "../common/Forms";
+import { type FieldValues, FormProvider, useForm } from "react-hook-form";
 import Field from "../common/Field";
+import { formTypeToForm } from "../../types/FormTypes";
 
 interface Props {
     onSave: (groupMember: GroupMember) => void;
 }
 
-const EditMember = (props: Props): JSX.Element => {
+const EditMember = (props: Props): ReactElement => {
     const memberList = useAppSelector((state) => state.members.membersList);
     const selectedForm = useAppSelector((state) => state.app.selectedForm);
     const editMemberIndex = useAppSelector((state) => state.members.editMemberIndex);
@@ -21,7 +21,7 @@ const EditMember = (props: Props): JSX.Element => {
     const [showMessage, setShowMessage] = React.useState(false);
     const dispatch = useAppDispatch();
     const methods = useForm();
-    const form = selectedForm === "form-one" ? FORM_ONE : FORM_TWO;
+    const form = formTypeToForm[selectedForm];
 
     React.useEffect(() => {
         if (editMemberIndex !== -1) {
@@ -50,7 +50,7 @@ const EditMember = (props: Props): JSX.Element => {
         setIsVisible(false);
     };
 
-    const onSubmit = (values: any) => {
+    const onSubmit = (values: FieldValues) => {
         setShowMessage(true);
         const updatedMember = {
             ...memberList[editMemberIndex],

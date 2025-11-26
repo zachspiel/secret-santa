@@ -11,6 +11,7 @@ interface Field {
     name: string;
     isRequired?: boolean;
     fieldType: FieldType;
+    readonly?: boolean;
 }
 
 export interface TextField extends Field {
@@ -87,6 +88,65 @@ export const FORM_ONE: FieldInput[] = [
 
 export const FORM_TWO: FieldInput[] = [
     ...BASE_FORM,
+    {
+        name: "comfortSnack",
+        label: "Tragedy has struck! What comfort snack are you reaching for?",
+        fieldType: FieldType.TEXT,
+    },
+    {
+        name: "activity",
+        label: `When you think, “huh, I haven't done that in a while,” What comes to mind? (Keep answers PG-13)`,
+        fieldType: FieldType.TEXT,
+    },
+    {
+        name: "lifetimeSupply",
+        label: "Yay! You just won a lifetime supply of [thing you would be excited to have a lifetime supply of]!",
+        fieldType: FieldType.TEXT,
+    },
+    {
+        name: "bookOrMovie",
+        label: "A book or movie you've been dying to consume?",
+        fieldType: FieldType.TEXT,
+    },
+    {
+        name: "tool",
+        label: "What is a kitchen item or tool that could improve your quality of life?",
+        fieldType: FieldType.TEXT,
+    },
+    {
+        name: "shopliftingItem",
+        label: "Shoplifting is no longer illegal! What are you taking first?",
+        fieldType: FieldType.TEXT,
+    },
+    {
+        name: "favoriteFranchises",
+        label: "I geek out for [fandom, sports team, comic franchise, hobby, etc...]!",
+        fieldType: FieldType.TEXT,
+    },
+    {
+        name: "itemToLeft",
+        label: "Look to your left. What item is there?",
+        fieldType: FieldType.TEXT,
+    },
+    {
+        name: "giftCard",
+        label: "I'm not very creative and super lame. Just get me [STORE NAME] gift card.",
+        fieldType: FieldType.TEXT,
+    },
+    {
+        name: "notes",
+        label: "Anything else you would want your Santa to know?",
+        fieldType: FieldType.TEXT,
+    },
+];
+
+export const FORM_THREE: FieldInput[] = [
+    ...BASE_FORM,
+    {
+        name: "wishlist",
+        label: "Wishlist URL",
+        fieldType: FieldType.URL,
+    },
     {
         name: "comfortSnack",
         label: "Tragedy has struck! What comfort snack are you reaching for?",

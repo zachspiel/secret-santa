@@ -1,5 +1,4 @@
-import React from "react";
-import { FieldInput, FieldType } from "./Forms";
+import { type FieldInput, FieldType } from "./Forms";
 import TextInput from "../../common/TextInput";
 import TextAreaInput from "../../common/TextAreaInput";
 import ColorInput from "../../common/ColorInput";

@@ -1,4 +1,4 @@
-import { SelectedForm } from "../types/FormTypes";
+import type { FormType } from "../types/FormTypes";
 
 export interface GroupMember {
     id: string;
@@ -7,25 +7,27 @@ export interface GroupMember {
     assignedTo: string;
     exclusions: string[];
     groupId?: string;
-    qAndA?: [
-        {
-            message: string;
-            from: string;
-            sent: string;
-        },
-    ];
+    qAndA?: QAndA[];
+    totalVisits?: number;
     [key: string]: any;
+}
+
+export interface QAndA {
+    id: string;
+    question: string;
+    answer: string;
 }
 
 export interface Group {
     _id: string;
-    formType: SelectedForm;
+    formType: FormType;
     createdBy: string;
     name: string;
     members: GroupMember[];
     currencySymbol?: string;
     budget?: string;
     date?: string;
+    inviteLink?: string;
 }
 
 export interface GroupFormValues {
@@ -62,6 +64,8 @@ export interface EmailGroupPayload {
     subject: string;
     message: string;
     members: GroupMember[];
+    groupId: string;
+    formType: FormType;
 }
 
 export type ModalTypes = "LOGIN_MODAL" | "REGISTER_MODAL";

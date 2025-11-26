@@ -1,81 +1,52 @@
-import React from "react";
+import { useRef, useState, type ReactElement } from "react";
 import confettiAnimation from "../../images/confetti.gif";
 import present from "../../images/present-bouncing.gif";
 import reindeer from "../../images/reindeer.gif";
-import santa from "../../images/santa-sled2.gif";
 import { Messages } from "primereact/messages";
 import { useAppQuery } from "../../redux/hooks";
 import Header from "../common/Header";
-import Snowfall from "react-snowfall";
 import { encryptString, getFormattedDate } from "../../common/util";
-import { FORM_ONE, FORM_TWO, FieldType } from "../common/Forms";
-import { SelectedForm } from "../../types/FormTypes";
+import { FieldType } from "../common/Forms";
+import { formTypeToForm } from "../../types/FormTypes";
 import {
-    BASE_API_URL,
     PRODUCTION_URL,
     useGetGroupByIdQuery,
+    useGetMemberByIdQuery,
     useSendMessageMutation,
 } from "../../redux/api";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { FormProvider, useForm } from "react-hook-form";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
+import { v4 as uuid } from "uuid";
+import { Message } from "primereact/message";
 
-const SecretSanta = (): JSX.Element => {
-    const [displayResult, setDisplayResult] = React.useState(false);
-    const [displaySanta, setDisplaySanta] = React.useState(false);
-    const [hasClicked, setHasClicked] = React.useState(false);
-    const message = React.useRef<Messages>(null);
-    const methods = useForm();
-
-    const decryptString = (stringToDecript: string | null): string => {
-        if (stringToDecript === null) {
-            return "Sorry, that user was not found.";
-        }
-        return atob(stringToDecript);
-    };
+const SecretSanta = (): ReactElement => {
+    const [displayResult, setDisplayResult] = useState(false);
+    const [hasClicked, setHasClicked] = useState(false);
+    const message = useRef<Messages>(null);
+    const methods = useForm<{ question: string }>();
 
     const query = useAppQuery();
 
-    const formType = query.get("formType")
-        ? (decryptString(query.get("formType")) as SelectedForm)
-        : "form-one";
-
-    const form = formType === "form-one" ? FORM_ONE : FORM_TWO;
-
-    const secretSanta = query.get("name");
-    const assignee = decryptString(query.get("selected"));
-    const budget = decryptString(query.get("budget"));
-    const currencySymbol = decryptString(query.get("currency"));
-    const date = decryptString(query.get("date"));
+    const memberId = query.get("id");
     const groupId = query.get("groupId");
     const { data } = useGetGroupByIdQuery(groupId ?? skipToken);
-    const memberData = data?.members.filter((member) => member.name === assignee)[0];
-    const [sendMessage] = useSendMessageMutation();
+    const formType = data?.formType ?? "form-one";
 
-    const decryptUrl = (wishlist: string | null): string => {
-        if (wishlist === null || wishlist.length === 0) {
-            return "";
-        }
+    const form = formTypeToForm[formType];
 
-        return atob(wishlist);
-    };
+    const {
+        data: result,
+        refetch,
+        isLoading: isRetrievingMember,
+    } = useGetMemberByIdQuery({ memberId: memberId || "" }, { skip: !memberId });
+    const secretSanta = result?.member;
+    const assignedMember = data?.members.find(
+        (member) => member.name === secretSanta?.assignedTo,
+    );
 
-    const openUrl = (newUrl: string): void => {
-        setDisplaySanta(true);
-        message?.current?.show([
-            {
-                severity: "success",
-                summary: "",
-                detail: `Santa is now getting URL for ${assignee}"s`,
-                sticky: true,
-            },
-        ]);
-        setTimeout(() => {
-            setDisplaySanta(false);
-            window.open(newUrl, "_blank");
-        }, 3000);
-    };
+    const [sendMessage, { isLoading }] = useSendMessageMutation();
 
     const playPresentAnimation = () => {
         setHasClicked(true);
@@ -85,59 +56,71 @@ const SecretSanta = (): JSX.Element => {
         }, 1050);
     };
 
-    const createDetailField = (label: string, content: string): JSX.Element => {
+    const createDetailField = (label: string, content: string): ReactElement => {
         return (
             <div className="d-flex flex-column mt-2" key={label}>
                 <p className="text-muted mb-0">{label}</p>
-                <p>
-                    <b>{content}</b>
+                <p className="mb-1">
+                    <strong>{content}</strong>
                 </p>
             </div>
         );
     };
 
-    const onSubmit = (data) => sendResponse(data);
-
-    const sendResponse = ({ question }: { question: string }) => {
+    const sendQuestion = ({ question }: { question: string }) => {
+        if (!assignedMember) {
+            return;
+        }
         const url: URL = new URL(`${PRODUCTION_URL}/secretSantaMessage/`);
         url.searchParams.append("type", "send-response");
         url.searchParams.append("message", encryptString(question));
+        url.searchParams.append("email", encryptString(secretSanta?.email ?? ""));
+        url.searchParams.append("memberId", memberId ?? "");
+        url.searchParams.append("groupId", groupId ?? "");
 
-        const assignedMember = data?.members.filter(
-            (member) => member.name === assignee,
-        )[0];
+        const questionPayload = {
+            id: uuid(),
+            question,
+            answer: "",
+        };
 
-        if (assignedMember) {
-            url.searchParams.append("email", encryptString(assignedMember.email));
+        url.searchParams.append("id", questionPayload.id);
 
-            sendMessage({
-                message: question,
-                email: assignedMember.email,
-                subject: "You recieved a question from your Secret Santa!",
-                url: url.toString(),
-                type: "question",
+        // Send email to assigned user with question from secret santa
+        sendMessage({
+            message: question,
+            email: assignedMember.email,
+            memberId: memberId ?? "",
+            groupId: groupId ?? "",
+            subject: "You recieved a question from your Secret Santa!",
+            url: url.toString(),
+            type: "question",
+            question: questionPayload,
+        })
+            .then(() => {
+                message?.current?.show([
+                    {
+                        severity: "success",
+                        summary: "",
+                        detail: "Successfully sent message",
+                        life: 3000,
+                    },
+                ]);
+
+                methods.setValue("question", "");
+
+                refetch();
             })
-                .then(() => {
-                    message?.current?.show([
-                        {
-                            severity: "success",
-                            summary: "",
-                            detail: "Successfully sent message",
-                            life: 3000,
-                        },
-                    ]);
-                })
-                .catch(() => {
-                    message?.current?.show([
-                        {
-                            severity: "error",
-                            summary: "",
-                            detail: "Error sending message, please try again later",
-                            life: 3000,
-                        },
-                    ]);
-                });
-        }
+            .catch(() => {
+                message?.current?.show([
+                    {
+                        severity: "error",
+                        summary: "",
+                        detail: "Error sending message, please try again later",
+                        life: 3000,
+                    },
+                ]);
+            });
     };
 
     return (
@@ -153,91 +136,76 @@ const SecretSanta = (): JSX.Element => {
                             <div>
                                 <div className="text-center border-bottom">
                                     <p>
-                                        Ho Ho Ho <b>{secretSanta}</b>!
+                                        Ho Ho Ho <strong>{secretSanta?.name}</strong>!
                                     </p>
                                     <p>
-                                        You are <b>{assignee}</b>
+                                        You are <strong>{assignedMember?.name}</strong>
                                         {`'s Secret Santa!`}
                                     </p>
                                 </div>
                                 <p className="mt-2">
-                                    Details for <b>{assignee}</b>:
+                                    Details for <strong>{assignedMember?.name}</strong>:
                                 </p>
-                                {budget !== "" &&
+                                {data?.budget &&
                                     createDetailField(
                                         "The budget is",
-                                        currencySymbol + budget,
+                                        data.currencySymbol + data.budget,
                                     )}
 
-                                {date !== "" &&
+                                {data?.date &&
                                     createDetailField(
                                         " The gift exchange will be held on",
-                                        getFormattedDate(date),
+                                        getFormattedDate(data.date),
                                     )}
 
                                 {form
                                     .filter((field) => field.name !== "name")
+                                    .filter((field) => {
+                                        const value = assignedMember?.[field.name];
+                                        return value && value.length > 0;
+                                    })
                                     .map((field) => {
-                                        const value = memberData?.[field.name];
+                                        const value = assignedMember?.[field.name];
 
-                                        if (value && value.length > 0) {
-                                            if (
-                                                field.fieldType === FieldType.TEXT ||
-                                                field.fieldType === FieldType.TEXT_AREA
-                                            ) {
-                                                return createDetailField(
-                                                    field.label,
-                                                    value,
-                                                );
-                                            }
-
-                                            if (field.fieldType === FieldType.COLOR) {
-                                                return (
+                                        if (
+                                            field.fieldType === FieldType.TEXT ||
+                                            field.fieldType === FieldType.TEXT_AREA
+                                        ) {
+                                            return createDetailField(field.label, value);
+                                        } else if (field.fieldType === FieldType.COLOR) {
+                                            return (
+                                                <div
+                                                    className="d-flex flex-column"
+                                                    key={field.name}
+                                                >
+                                                    <p className="text-muted mb-0">
+                                                        {field.label}
+                                                    </p>
                                                     <div
-                                                        className="d-flex flex-column"
-                                                        key={field.name}
-                                                    >
-                                                        <p className="text-muted mb-0">
-                                                            {field.label}
-                                                        </p>
-                                                        <div
-                                                            className="p-colorpicker-preview mb-2"
-                                                            style={{
-                                                                backgroundColor:
-                                                                    "#" + value,
-                                                                width: "1.5rem",
-                                                                height: "1.5rem",
-                                                            }}
-                                                        />
-                                                    </div>
-                                                );
-                                            }
+                                                        className="p-colorpicker-preview mb-2"
+                                                        style={{
+                                                            backgroundColor: "#" + value,
+                                                            width: "1.5rem",
+                                                            height: "1.5rem",
+                                                        }}
+                                                    />
+                                                </div>
+                                            );
+                                        } else if (field.fieldType === FieldType.URL) {
+                                            return (
+                                                <div className="mt-2" key={field.name}>
+                                                    <p>{field.label}</p>
+                                                    <div className="d-flex align-items-center">
+                                                        <i className="pi pi-external-link me-2" />
 
-                                            if (field.fieldType === FieldType.URL) {
-                                                const url = decryptUrl(
-                                                    query.get(field.name),
-                                                );
-
-                                                return (
-                                                    <div
-                                                        className="d-flex mt-2"
-                                                        key={field.name}
-                                                    >
-                                                        <i className="pi pi-external-link me-2 mt-1" />
-                                                        <p>
-                                                            {field.label}
-                                                            <b
-                                                                className="text-primary"
-                                                                onClick={() =>
-                                                                    openUrl(url)
-                                                                }
-                                                            >
-                                                                Open URL
-                                                            </b>
-                                                        </p>
+                                                        <a href={value} target="_blank">
+                                                            <b>Open URL</b>
+                                                        </a>
                                                     </div>
-                                                );
-                                            }
+                                                </div>
+                                            );
+                                        } else {
+                                            return null;
                                         }
                                     })}
 
@@ -278,16 +246,17 @@ const SecretSanta = (): JSX.Element => {
 
                         {displayResult && (
                             <div>
-                                <div className="text-center">
+                                <div>
                                     <p>
-                                        Have a question for your assigned person? Send
-                                        them an anonomous message below. You will recieve
-                                        an email once they have replied!
+                                        Have a question for{" "}
+                                        <strong>{assignedMember?.name}</strong>? Send them
+                                        an anonymous message below. You will recieve an
+                                        email once they have replied!
                                     </p>
                                 </div>
 
                                 <FormProvider {...methods}>
-                                    <form onSubmit={methods.handleSubmit(onSubmit)}>
+                                    <form onSubmit={methods.handleSubmit(sendQuestion)}>
                                         <div className="d-flex flex-column gap-2">
                                             <InputText
                                                 {...methods.register("question", {
@@ -302,24 +271,56 @@ const SecretSanta = (): JSX.Element => {
                                             disabled={
                                                 methods.getFieldState("question").invalid
                                             }
+                                            loading={isLoading || isRetrievingMember}
                                         >
                                             Send
                                         </Button>
                                     </form>
                                 </FormProvider>
+
+                                <h4 className="mt-4">
+                                    <strong>
+                                        Chat history with {assignedMember?.name}
+                                    </strong>
+                                </h4>
+
+                                {secretSanta?.qAndA && secretSanta.qAndA.length === 0 && (
+                                    <p>
+                                        When you send your first message, it will show up
+                                        here!
+                                    </p>
+                                )}
+
+                                <div className="d-flex flex-column">
+                                    {secretSanta?.qAndA?.map((item) => (
+                                        <>
+                                            <div className="d-flex justify-content-end mb-1">
+                                                <Message
+                                                    severity="info"
+                                                    style={{ maxWidth: "75%" }}
+                                                    text={item.question}
+                                                    icon={<></>}
+                                                />
+                                            </div>
+
+                                            <div className="d-flex justify-content-start mb-1">
+                                                {item.answer.length > 0 && (
+                                                    <Message
+                                                        severity="success"
+                                                        style={{ maxWidth: "75%" }}
+                                                        text={item.answer}
+                                                        icon={<></>}
+                                                    />
+                                                )}
+                                            </div>
+                                        </>
+                                    ))}{" "}
+                                </div>
                             </div>
                         )}
                     </div>
                 </div>
             </div>
-            <div className="row">
-                <img
-                    src={santa}
-                    id={displaySanta ? "santa" : "santa-hidden"}
-                    alt="santa"
-                />
-            </div>
-            <Snowfall color="white" />
         </div>
     );
 };

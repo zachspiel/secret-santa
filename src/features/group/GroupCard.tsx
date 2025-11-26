@@ -1,18 +1,17 @@
-import React from "react";
+import React, { type ReactElement } from "react";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { InputSwitch } from "primereact/inputswitch";
 import { ScrollPanel } from "primereact/scrollpanel";
 import { Toast } from "primereact/toast";
-import { Group } from "../../common/types";
+import type { Group } from "../../common/types";
 import {
     getListOfNames,
     generateDraw,
     getFormattedDate,
     createUrl,
-    findIndexById,
 } from "../../common/util";
-import { useUpdateGroupByIdMutation } from "../../redux/api";
+import { PRODUCTION_URL, useUpdateGroupByIdMutation } from "../../redux/api";
 import copy from "copy-to-clipboard";
 import EmailGroup from "./EmailGroup";
 
@@ -26,16 +25,15 @@ interface Props {
     onDeleteGroup: (index: number) => void;
 }
 
-const GroupCard = (props: Props): JSX.Element => {
-    const {
-        group,
-        groupList,
-        index,
-        displaySecretSantas,
-        setDisplaySecretSantas,
-        toast,
-    } = props;
-
+const GroupCard = ({
+    group,
+    groupList,
+    index,
+    displaySecretSantas,
+    setDisplaySecretSantas,
+    onDeleteGroup,
+    toast,
+}: Props): ReactElement => {
     const [updateGroup, { isSuccess: groupUpdatedSuccessfully }] =
         useUpdateGroupByIdMutation();
 
@@ -93,38 +91,23 @@ const GroupCard = (props: Props): JSX.Element => {
     const Footer = (index: number) => {
         return (
             <div className="d-flex justify-content-md-end justify-content-sm-center p-2">
-                <EmailGroup members={groupList[index].members} />
+                <EmailGroup group={groupList[index]} />
                 <Button
                     label="Delete"
                     className="p-button-outlined p-button-danger p-button-sm me-2"
-                    onClick={() => props.onDeleteGroup(index)}
+                    onClick={() => onDeleteGroup(index)}
                 />
                 <Button
                     label="Re-shuffle list"
                     className="p-button-outlined p-button-sm"
                     onClick={() => {
-                        const { name, currencySymbol, budget, date, formType } =
-                            groupList[index];
+                        const { formType } = groupList[index];
                         const _members = [...groupList[index].members];
                         const names = getListOfNames(_members);
                         let updatedGroup = generateDraw(names, [...names], _members);
 
                         updatedGroup = updatedGroup.map((member) => {
-                            const assignedToIndex = findIndexById(
-                                member.assignedTo,
-                                updatedGroup,
-                            );
-                            const inviteLink = createUrl(
-                                member,
-                                updatedGroup[assignedToIndex],
-                                {
-                                    groupName: name,
-                                    budget: budget ?? "",
-                                    date: date ?? "",
-                                    currency: currencySymbol ?? "",
-                                },
-                                formType,
-                            );
+                            const inviteLink = createUrl(member, formType);
 
                             return { ...member, inviteLink };
                         });
@@ -150,6 +133,7 @@ const GroupCard = (props: Props): JSX.Element => {
                     <p>Name</p>
                     <p>Assigned to</p>
                     <p>Invite link</p>
+                    <p>Edit link</p>
                 </div>
                 <ScrollPanel
                     style={{ width: "100%", height: "280px" }}
@@ -173,7 +157,23 @@ const GroupCard = (props: Props): JSX.Element => {
                                     className="p-button-text"
                                     onClick={() => {
                                         copy(member.inviteLink ?? "");
-                                        props.toast.current?.show({
+                                        toast.current?.show({
+                                            severity: "success",
+                                            summary: "Success",
+                                            detail: "Invite sucessfully copied.",
+                                            life: 3000,
+                                        });
+                                    }}
+                                />
+
+                                <Button
+                                    label="Copy edit link"
+                                    className="p-button-text"
+                                    onClick={() => {
+                                        copy(
+                                            `${PRODUCTION_URL}/memberForm?memberId=${member.id}&groupId=${member.groupId}&formType=${group.formType}`,
+                                        );
+                                        toast.current?.show({
                                             severity: "success",
                                             summary: "Success",
                                             detail: "Invite sucessfully copied.",

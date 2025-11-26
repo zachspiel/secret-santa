@@ -1,11 +1,11 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { SelectedForm } from "./types/FormTypes";
+import type { FormType } from "./types/FormTypes";
 
 interface AppSlice {
     isUserSignedIn: boolean;
     currentStep: number;
-    selectedForm: SelectedForm;
+    selectedForm: FormType;
 }
 
 const initialState: AppSlice = {
@@ -30,7 +30,7 @@ export const appSlice = createSlice({
         progressToNextStep: (state) => {
             state.currentStep++;
         },
-        setSelectedForm: (state, action: PayloadAction<SelectedForm>) => {
+        setFormType: (state, action: PayloadAction<FormType>) => {
             state.selectedForm = action.payload;
         },
     },
@@ -40,6 +40,6 @@ export const {
     setSignInStatus,
     progressToPreviousStep,
     progressToNextStep,
-    setSelectedForm,
+    setFormType,
 } = appSlice.actions;
 export default appSlice.reducer;

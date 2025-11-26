@@ -1,12 +1,12 @@
-import React from "react";
+import React, { type ReactElement } from "react";
 import { InputText } from "primereact/inputtext";
 import { Dialog } from "primereact/dialog";
 import { Message } from "primereact/message";
-import { RegisterPayload, useRegisterUserMutation } from "../../redux/api";
+import { type RegisterPayload, useRegisterUserMutation } from "../../redux/api";
 import { useAppDispatch } from "../../redux/hooks";
 import { setSignInStatus } from "../../appSlice";
 import { object, string, ref } from "yup";
-import { Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
+import { Formik, type FormikErrors, type FormikProps, type FormikTouched } from "formik";
 import { Button } from "primereact/button";
 import { Password } from "primereact/password";
 
@@ -36,12 +36,10 @@ const initialValues: RegisterUserValues = {
 export const registerValidationSchema = object().shape({
     firstName: string()
         .trim()
-        .min(3, "First name must be at least 3 characters long.")
         .max(20, "First name cannot be longer than 20 characters.")
         .required("First name is required."),
     lastName: string()
         .trim()
-        .min(3, "Last name must be at least 3 characters long.")
         .max(20, "Last name cannot be longer than 20 characters.")
         .required("Last name is required."),
     email: string().trim().email().required("Email is required."),
@@ -54,15 +52,12 @@ export const registerValidationSchema = object().shape({
         .oneOf([ref("password"), null], "Passwords must match"),
 });
 
-const RegisterModal = (props: Props): JSX.Element => {
+const RegisterModal = ({ isVisible, renderLoginModal, onHide }: Props): ReactElement => {
     const dispatch = useAppDispatch();
     const [registerUser, { isError, data }] = useRegisterUserMutation();
-    const { isVisible, renderLoginModal, onHide } = props;
 
     React.useEffect(() => {
         if (!isError && data?.data !== undefined) {
-            localStorage.setItem("token", data.data.token);
-            localStorage.setItem("currentUser", data.data.currentUser);
             dispatch(setSignInStatus(true));
             onHide();
         }
@@ -122,10 +117,11 @@ const RegisterModal = (props: Props): JSX.Element => {
             </>
         );
     };
+
     return (
         <Dialog
             header="Register"
-            onHide={() => onHide}
+            onHide={onHide}
             visible={isVisible}
             breakpoints={{ "960px": "75vw", "640px": "100vw" }}
             style={{ width: "50vw" }}
@@ -133,9 +129,7 @@ const RegisterModal = (props: Props): JSX.Element => {
             <div className="p-grid p-fluid col">
                 <Formik
                     initialValues={initialValues}
-                    onSubmit={(values, actions) => {
-                        registerUser(values);
-                    }}
+                    onSubmit={registerUser}
                     validationSchema={registerValidationSchema}
                 >
                     {(props) => (
@@ -178,7 +172,7 @@ const RegisterModal = (props: Props): JSX.Element => {
                         Already have an account? Click
                         <span
                             className="text-primary register-link"
-                            onClick={() => renderLoginModal}
+                            onClick={renderLoginModal}
                         >
                             {` here `}
                         </span>

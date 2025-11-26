@@ -1,10 +1,19 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { EmailGroupPayload, Group, User } from "../common/types";
+import type { EmailGroupPayload, Group, GroupMember, QAndA, User } from "../common/types";
+import type { FormType } from "../types/FormTypes";
 
 type Payload = {
     _id: string;
     body: Group | Partial<User>;
 };
+
+interface UpdateMemberPayload {
+    member: GroupMember;
+    formType: FormType;
+    groupId: string;
+    inviteLink: string;
+    email: string;
+}
 
 type LoginPayload = {
     email: string;
@@ -31,11 +40,14 @@ export interface SendMessagePayload {
     message: string;
     email: string;
     url: string;
+    question: QAndA;
+    memberId: string;
+    groupId: string;
     type: "question" | "answer";
 }
 
 export const PRODUCTION_URL = "https://spiel-secret-santa.vercel.app";
-export const BASE_API_URL = "https://secret-santa-server-zachspiel.vercel.app";
+export const BASE_API_URL = "https://secret-santa-server.vercel.app";
 
 export const api = createApi({
     reducerPath: "api",
@@ -86,6 +98,21 @@ export const api = createApi({
             }),
             invalidatesTags: ["GROUPS"],
         }),
+        getMemberById: builder.query<
+            { member: GroupMember; name: string; formType: string; groupId: string },
+            { memberId: string }
+        >({
+            query: ({ memberId }) => ({
+                url: `group/member/${memberId}`,
+            }),
+        }),
+        updateMemberById: builder.mutation({
+            query: (payload: UpdateMemberPayload) => ({
+                url: `group/${payload.groupId}/member/${payload.member.id}/update`,
+                method: "POST",
+                body: payload,
+            }),
+        }),
         loginUser: builder.mutation<Authenticationresponse, LoginPayload>({
             query: (body) => ({
                 url: "user/login",
@@ -93,6 +120,11 @@ export const api = createApi({
                 body: body,
                 invalidatesTags: ["GROUPS, USER"],
             }),
+            transformResponse: (response: Authenticationresponse) => {
+                localStorage.setItem("token", response.data.token);
+                localStorage.setItem("currentUser", response.data.currentUser);
+                return response;
+            },
         }),
         registerUser: builder.mutation<Authenticationresponse, RegisterPayload>({
             query: (body) => ({
@@ -100,6 +132,11 @@ export const api = createApi({
                 method: "POST",
                 body: body,
             }),
+            transformResponse: (response: Authenticationresponse) => {
+                localStorage.setItem("token", response.data.token);
+                localStorage.setItem("currentUser", response.data.currentUser);
+                return response;
+            },
         }),
         getUserById: builder.query<User, string>({
             query: (id: string) => ({
@@ -137,4 +174,6 @@ export const {
     useGetGroupByIdQuery,
     useUpdateUserByIdMutation,
     useSendMessageMutation,
+    useUpdateMemberByIdMutation,
+    useGetMemberByIdQuery,
 } = api;
