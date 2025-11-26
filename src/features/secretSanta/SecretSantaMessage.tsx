@@ -16,7 +16,8 @@ const SecretSantaMessage = (): ReactElement => {
     const methods = useForm<{ response: string }>();
     const query = useAppQuery();
     const message = atob(query.get("message") ?? "");
-    const email = atob(query.get("email") ?? "");
+
+    const secretSantaEmail = atob(query.get("email") ?? "");
     const type = query.get("type");
     const questionId = query.get("id") ?? "";
     const memberId = query.get("memberId");
@@ -26,25 +27,22 @@ const SecretSantaMessage = (): ReactElement => {
     const { data: group } = useGetGroupByIdQuery(groupId || "", {
         skip: groupId === null,
     });
-    const currentUser = group?.members?.find((member) => member.id === memberId);
+    const secretSanta = group?.members?.find((member) => member.id === memberId);
     const assignedMember = group?.members?.find(
-        (groupMember) => groupMember.name === currentUser?.assignedTo,
+        (groupMember) => groupMember.name === secretSanta?.assignedTo,
     );
 
-    const onSubmit = (data: { response: string }) => sendResponse(data);
-
-    const sendResponse = ({ response }: { response: string }) => {
+    const sendEmailToSecretSanta = ({ response }: { response: string }) => {
         const url: URL = new URL(`${PRODUCTION_URL}/secretSantaMessage/`);
         url.searchParams.append("type", "recieved-response");
         url.searchParams.append("message", encryptString(response));
-        url.searchParams.append("email", encryptString(query.get("email") ?? ""));
         url.searchParams.append("memberId", memberId ?? "");
         url.searchParams.append("groupId", groupId ?? "");
 
-        if (email) {
+        if (secretSantaEmail && secretSantaEmail.length > 0) {
             sendMessage({
                 message: response,
-                email: email,
+                email: secretSantaEmail,
                 memberId: memberId ?? "",
                 groupId: groupId ?? "",
                 subject: `You recieved a response from ${
@@ -67,6 +65,8 @@ const SecretSantaMessage = (): ReactElement => {
                             life: 3000,
                         },
                     ]);
+
+                    methods.setValue("response", "");
                 })
                 .catch(() => {
                     messageRef?.current?.show([
@@ -106,9 +106,13 @@ const SecretSantaMessage = (): ReactElement => {
                                 </div>
 
                                 <FormProvider {...methods}>
-                                    <form onSubmit={methods.handleSubmit(onSubmit)}>
+                                    <form
+                                        onSubmit={methods.handleSubmit(
+                                            sendEmailToSecretSanta,
+                                        )}
+                                    >
                                         <div className="d-flex flex-column gap-2">
-                                            <label htmlFor="response">Respose</label>
+                                            <label htmlFor="response">Response</label>
                                             <InputText
                                                 {...methods.register("response", {
                                                     required: true,
@@ -141,10 +145,7 @@ const SecretSantaMessage = (): ReactElement => {
                                     {message}
                                 </div>
 
-                                <a
-                                    href={assignedMember?.inviteLink ?? ""}
-                                    className="mt-2"
-                                >
+                                <a href={secretSanta?.inviteLink ?? ""} className="mt-2">
                                     View {assignedMember?.name}'s information
                                 </a>
                             </>

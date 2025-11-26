@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { GroupPayload } from "../features/home/components/CreateGroup";
 import type { FormType } from "../types/FormTypes";
 import type { GroupMember } from "./types";
 
@@ -67,45 +66,17 @@ const findMemberIndex = (name: string, members: GroupMember[]): number => {
     return members.findIndex((member) => member.name === name);
 };
 
-const createUrl = (
-    member: GroupMember,
-    assignedMember: GroupMember,
-    groupData: GroupPayload,
-    formType: FormType,
-): string => {
+const createUrl = (member: GroupMember, formType: FormType): string => {
     const url: URL = new URL("https://spiel-secret-santa.vercel.app/getSecretSanta/");
-    url.searchParams.append("selected", encryptString(member.assignedTo));
-    url.searchParams.append("currency", encryptString(groupData.currency));
-    url.searchParams.append("budget", encryptString(groupData.budget));
-    url.searchParams.append("date", encryptString(groupData.date));
     url.searchParams.append("formType", encryptString(formType));
     url.searchParams.append("id", member.id);
-    url.searchParams.append("name", member.name);
     url.searchParams.append("groupId", member.groupId ?? "");
-
-    for (const [key, value] of Object.entries(assignedMember)) {
-        if (key === "wishlist") {
-            url.searchParams.append("wishlist", encryptString(value));
-        } else if (
-            key !== "exclusions" &&
-            key !== "inviteLink" &&
-            key !== "assignedTo" &&
-            key !== "_id" &&
-            key !== "name"
-        ) {
-            url.searchParams.append(key, encodeString(value));
-        }
-    }
 
     return url.toString();
 };
 
 const encryptString = (stringToEncrypt: string): string => {
     return btoa(stringToEncrypt);
-};
-
-const encodeString = (stringToEncode: string | undefined): string => {
-    return encodeURIComponent(stringToEncode ?? "");
 };
 
 const getFormattedDate = (date: string): string => {

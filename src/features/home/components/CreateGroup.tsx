@@ -4,7 +4,7 @@ import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import type { Group, GroupMember } from "../../../common/types";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { createUrl, findByName, getAllAvailableCurrency } from "../../../common/util";
+import { createUrl, getAllAvailableCurrency } from "../../../common/util";
 import { useInsertGroupMutation } from "../../../redux/api";
 import { Dropdown } from "primereact/dropdown";
 import { setMembersList } from "../../../redux/membersSlice";
@@ -85,15 +85,8 @@ const CreateGroup = ({ createToast }: Props): ReactElement => {
     };
 
     const onSaveGroup = (values: GroupPayload) => {
-        const _members: GroupMember[] = members.map((member, index) => {
-            const assignedMember = findByName(members[index].assignedTo, members);
-
-            const inviteLink = createUrl(
-                members[index],
-                assignedMember as GroupMember,
-                values,
-                selectedForm,
-            );
+        const _members: GroupMember[] = members.map((member) => {
+            const inviteLink = createUrl(member, selectedForm);
             return {
                 ...member,
                 inviteLink: inviteLink,

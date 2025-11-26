@@ -4,13 +4,12 @@ import { Card } from "primereact/card";
 import { InputSwitch } from "primereact/inputswitch";
 import { ScrollPanel } from "primereact/scrollpanel";
 import { Toast } from "primereact/toast";
-import type { Group, GroupMember } from "../../common/types";
+import type { Group } from "../../common/types";
 import {
     getListOfNames,
     generateDraw,
     getFormattedDate,
     createUrl,
-    findByName,
 } from "../../common/util";
 import { PRODUCTION_URL, useUpdateGroupByIdMutation } from "../../redux/api";
 import copy from "copy-to-clipboard";
@@ -102,27 +101,13 @@ const GroupCard = ({
                     label="Re-shuffle list"
                     className="p-button-outlined p-button-sm"
                     onClick={() => {
-                        const { name, currencySymbol, budget, date, formType } =
-                            groupList[index];
+                        const { formType } = groupList[index];
                         const _members = [...groupList[index].members];
                         const names = getListOfNames(_members);
                         let updatedGroup = generateDraw(names, [...names], _members);
 
                         updatedGroup = updatedGroup.map((member) => {
-                            const inviteLink = createUrl(
-                                member,
-                                findByName(
-                                    member.assignedTo,
-                                    updatedGroup,
-                                ) as GroupMember,
-                                {
-                                    groupName: name,
-                                    budget: budget ?? "",
-                                    date: date ?? "",
-                                    currency: currencySymbol ?? "",
-                                },
-                                formType,
-                            );
+                            const inviteLink = createUrl(member, formType);
 
                             return { ...member, inviteLink };
                         });

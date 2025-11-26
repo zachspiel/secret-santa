@@ -36,13 +36,14 @@ const SecretSanta = (): ReactElement => {
 
     const form = formTypeToForm[formType];
 
-    const { data: result } = useGetMemberByIdQuery(
-        { memberId: memberId || "" },
-        { skip: !memberId },
-    );
-    const currentUser = result?.member;
+    const {
+        data: result,
+        refetch,
+        isLoading: isRetrievingMember,
+    } = useGetMemberByIdQuery({ memberId: memberId || "" }, { skip: !memberId });
+    const secretSanta = result?.member;
     const assignedMember = data?.members.find(
-        (member) => member.name === currentUser?.assignedTo,
+        (member) => member.name === secretSanta?.assignedTo,
     );
 
     const [sendMessage, { isLoading }] = useSendMessageMutation();
@@ -66,14 +67,14 @@ const SecretSanta = (): ReactElement => {
         );
     };
 
-    const sendResponse = ({ question }: { question: string }) => {
+    const sendQuestion = ({ question }: { question: string }) => {
         if (!assignedMember) {
             return;
         }
         const url: URL = new URL(`${PRODUCTION_URL}/secretSantaMessage/`);
         url.searchParams.append("type", "send-response");
         url.searchParams.append("message", encryptString(question));
-        url.searchParams.append("email", encryptString(currentUser?.email ?? ""));
+        url.searchParams.append("email", encryptString(secretSanta?.email ?? ""));
         url.searchParams.append("memberId", memberId ?? "");
         url.searchParams.append("groupId", groupId ?? "");
 
@@ -85,6 +86,7 @@ const SecretSanta = (): ReactElement => {
 
         url.searchParams.append("id", questionPayload.id);
 
+        // Send email to assigned user with question from secret santa
         sendMessage({
             message: question,
             email: assignedMember.email,
@@ -106,6 +108,8 @@ const SecretSanta = (): ReactElement => {
                 ]);
 
                 methods.setValue("question", "");
+
+                refetch();
             })
             .catch(() => {
                 message?.current?.show([
@@ -132,7 +136,7 @@ const SecretSanta = (): ReactElement => {
                             <div>
                                 <div className="text-center border-bottom">
                                     <p>
-                                        Ho Ho Ho <strong>{currentUser?.name}</strong>!
+                                        Ho Ho Ho <strong>{secretSanta?.name}</strong>!
                                     </p>
                                     <p>
                                         You are <strong>{assignedMember?.name}</strong>
@@ -252,7 +256,7 @@ const SecretSanta = (): ReactElement => {
                                 </div>
 
                                 <FormProvider {...methods}>
-                                    <form onSubmit={methods.handleSubmit(sendResponse)}>
+                                    <form onSubmit={methods.handleSubmit(sendQuestion)}>
                                         <div className="d-flex flex-column gap-2">
                                             <InputText
                                                 {...methods.register("question", {
@@ -267,7 +271,7 @@ const SecretSanta = (): ReactElement => {
                                             disabled={
                                                 methods.getFieldState("question").invalid
                                             }
-                                            loading={isLoading}
+                                            loading={isLoading || isRetrievingMember}
                                         >
                                             Send
                                         </Button>
@@ -280,7 +284,7 @@ const SecretSanta = (): ReactElement => {
                                     </strong>
                                 </h4>
 
-                                {currentUser?.qAndA && currentUser.qAndA.length === 0 && (
+                                {secretSanta?.qAndA && secretSanta.qAndA.length === 0 && (
                                     <p>
                                         When you send your first message, it will show up
                                         here!
@@ -288,7 +292,7 @@ const SecretSanta = (): ReactElement => {
                                 )}
 
                                 <div className="d-flex flex-column">
-                                    {currentUser?.qAndA?.map((item) => (
+                                    {secretSanta?.qAndA?.map((item) => (
                                         <>
                                             <div className="d-flex justify-content-end mb-1">
                                                 <Message

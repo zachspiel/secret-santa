@@ -8,6 +8,7 @@ export interface GroupMember {
     exclusions: string[];
     groupId?: string;
     qAndA?: QAndA[];
+    totalVisits?: number;
     [key: string]: any;
 }
 
