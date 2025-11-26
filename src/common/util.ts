@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { GroupPayload } from "../features/home/components/CreateGroup";
-import type { SelectedForm } from "../types/FormTypes";
+import type { FormType } from "../types/FormTypes";
 import type { GroupMember } from "./types";
 
 const getListOfNames = (members: GroupMember[]): string[] => {
@@ -71,7 +71,7 @@ const createUrl = (
     member: GroupMember,
     assignedMember: GroupMember,
     groupData: GroupPayload,
-    formType: SelectedForm,
+    formType: FormType,
 ): string => {
     const url: URL = new URL("https://spiel-secret-santa.vercel.app/getSecretSanta/");
     url.searchParams.append("selected", encryptString(member.assignedTo));

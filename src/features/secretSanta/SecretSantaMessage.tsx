@@ -26,9 +26,9 @@ const SecretSantaMessage = (): ReactElement => {
     const { data: group } = useGetGroupByIdQuery(groupId || "", {
         skip: groupId === null,
     });
-    const member = group?.members?.find((member) => member.id === memberId);
-    const assignee = group?.members?.find(
-        (groupMember) => groupMember.name === member?.assignedTo,
+    const currentUser = group?.members?.find((member) => member.id === memberId);
+    const assignedMember = group?.members?.find(
+        (groupMember) => groupMember.name === currentUser?.assignedTo,
     );
 
     const onSubmit = (data: { response: string }) => sendResponse(data);
@@ -48,7 +48,7 @@ const SecretSantaMessage = (): ReactElement => {
                 memberId: memberId ?? "",
                 groupId: groupId ?? "",
                 subject: `You recieved a response from ${
-                    assignee?.name ?? " your secret santa assignee"
+                    assignedMember?.name ?? " your secret santa assignee"
                 }`,
                 url: url.toString(),
                 type: "answer",
@@ -131,7 +131,7 @@ const SecretSantaMessage = (): ReactElement => {
                             <>
                                 <p>
                                     You have received a response from{" "}
-                                    <strong>{assignee?.name}</strong>!
+                                    <strong>{assignedMember?.name}</strong>!
                                 </p>
 
                                 <div
@@ -141,8 +141,11 @@ const SecretSantaMessage = (): ReactElement => {
                                     {message}
                                 </div>
 
-                                <a href={member?.inviteLink ?? ""} className="mt-2">
-                                    View {assignee?.name}'s information
+                                <a
+                                    href={assignedMember?.inviteLink ?? ""}
+                                    className="mt-2"
+                                >
+                                    View {assignedMember?.name}'s information
                                 </a>
                             </>
                         )}

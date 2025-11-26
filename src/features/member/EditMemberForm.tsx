@@ -7,7 +7,7 @@ import {
 } from "../../redux/api";
 import Header from "../common/Header";
 import { Message } from "primereact/message";
-import { formTypeToForm, type SelectedForm } from "../../types/FormTypes";
+import { formTypeToForm, type FormType } from "../../types/FormTypes";
 import { FormProvider, useForm } from "react-hook-form";
 import type { GroupMember } from "../../common/types";
 
@@ -18,7 +18,7 @@ const EditMemberForm = (): ReactElement => {
     const query = useAppQuery();
     const groupId = query.get("groupId");
     const memberId = query.get("memberId");
-    const formType = query.get("formType") as SelectedForm | null;
+    const formType = query.get("formType") as FormType | null;
 
     const form = formTypeToForm[formType || "form-one"];
     const methods = useForm<GroupMember>();

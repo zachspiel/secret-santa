@@ -40,8 +40,9 @@ const SecretSanta = (): ReactElement => {
         { memberId: memberId || "" },
         { skip: !memberId },
     );
+    const currentUser = result?.member;
     const assignedMember = data?.members.find(
-        (member) => member.name === result?.member?.assignedTo,
+        (member) => member.name === currentUser?.assignedTo,
     );
 
     const [sendMessage, { isLoading }] = useSendMessageMutation();
@@ -72,7 +73,7 @@ const SecretSanta = (): ReactElement => {
         const url: URL = new URL(`${PRODUCTION_URL}/secretSantaMessage/`);
         url.searchParams.append("type", "send-response");
         url.searchParams.append("message", encryptString(question));
-        url.searchParams.append("email", encryptString(result?.member.email ?? ""));
+        url.searchParams.append("email", encryptString(currentUser?.email ?? ""));
         url.searchParams.append("memberId", memberId ?? "");
         url.searchParams.append("groupId", groupId ?? "");
 
@@ -131,7 +132,7 @@ const SecretSanta = (): ReactElement => {
                             <div>
                                 <div className="text-center border-bottom">
                                     <p>
-                                        Ho Ho Ho <strong>{result?.member.name}</strong>!
+                                        Ho Ho Ho <strong>{currentUser?.name}</strong>!
                                     </p>
                                     <p>
                                         You are <strong>{assignedMember?.name}</strong>
@@ -279,16 +280,15 @@ const SecretSanta = (): ReactElement => {
                                     </strong>
                                 </h4>
 
-                                {result?.member?.qAndA &&
-                                    result.member.qAndA.length === 0 && (
-                                        <p>
-                                            When you send your first message, it will show
-                                            up here!
-                                        </p>
-                                    )}
+                                {currentUser?.qAndA && currentUser.qAndA.length === 0 && (
+                                    <p>
+                                        When you send your first message, it will show up
+                                        here!
+                                    </p>
+                                )}
 
                                 <div className="d-flex flex-column">
-                                    {result?.member.qAndA?.map((item) => (
+                                    {currentUser?.qAndA?.map((item) => (
                                         <>
                                             <div className="d-flex justify-content-end mb-1">
                                                 <Message

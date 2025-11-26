@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { Dropdown } from "primereact/dropdown";
-import { progressToNextStep, setSelectedForm } from "../../../appSlice";
+import { progressToNextStep, setFormType } from "../../../appSlice";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { type FieldInput } from "../../common/Forms";
@@ -31,7 +31,7 @@ const SelectForm = (): ReactElement => {
                             { value: "form-three", label: "Form Three" },
                         ]}
                         onChange={(event) => {
-                            dispatch(setSelectedForm(event.value));
+                            dispatch(setFormType(event.value));
                         }}
                     />
                 </div>

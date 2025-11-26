@@ -5,9 +5,9 @@ import {
     FORM_THREE,
 } from "../features/common/Forms";
 
-export type SelectedForm = "form-one" | "form-two" | "form-three";
+export type FormType = "form-one" | "form-two" | "form-three";
 
-export const formTypeToForm: Record<SelectedForm, FieldInput[]> = {
+export const formTypeToForm: Record<FormType, FieldInput[]> = {
     "form-one": FORM_ONE,
     "form-two": FORM_TWO,
     "form-three": FORM_THREE,

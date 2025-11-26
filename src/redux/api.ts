@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { EmailGroupPayload, Group, GroupMember, QAndA, User } from "../common/types";
-import type { SelectedForm } from "../types/FormTypes";
+import type { FormType } from "../types/FormTypes";
 
 type Payload = {
     _id: string;
@@ -9,7 +9,7 @@ type Payload = {
 
 interface UpdateMemberPayload {
     member: GroupMember;
-    formType: SelectedForm;
+    formType: FormType;
     groupId: string;
     inviteLink: string;
     email: string;
